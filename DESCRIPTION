@@ -1,0 +1,18 @@
+Package: dsOMOPHelper
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R:
+    c(person("David", "Sarrat González", , "david.sarrat@isglobal.org", role = c("aut", "cre")),
+      person("Xavier", "Escribà Montagut", , "xavier.escriba@isglobal.org", role = c("aut")),
+      person("Juan R", "González", , "juanr.gonzalez@isglobal.org", role = c("aut")))
+Description: What the package does (one paragraph).
+License: MIT
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports:
+    crayon,
+    DSI
+Remotes:
+    datashield/dsBaseClient,
+    isglobal-brge/dsOMOPClient
