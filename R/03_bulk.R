@@ -45,6 +45,11 @@ OMOPCDMHelper$set("public", "bulk", function(tables, columns = NULL, concepts = 
 
 
 generateTableColumns <- function(tableName, columnNames) {
+  # If no column names are provided, it will not generate the prefixed column names
+  if (is.null(columnNames)) {
+    return(NULL)
+  }
+
   tableName <- tolower(tableName) # Converts the table name to lowercase
   tableName <- gsub("_occurrence", "", tableName) # Removes the "_occurrence" suffix
 
