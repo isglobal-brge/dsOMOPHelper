@@ -16,7 +16,7 @@ OMOPCDMHelper$set("public", "append", function(table,
   }
 
   # Retrieves the target table from the database, applying the filters
-  self$OMOPCDMDatabase$get(
+  self$get(
     table = table,
     symbol = tableSymbol,
     columnFilter = columns,
