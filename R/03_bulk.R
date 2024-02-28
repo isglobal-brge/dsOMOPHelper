@@ -1,15 +1,34 @@
 #' @export
-OMOPCDMHelper$set("public", "bulk", function(tables = NULL, columns = NULL, concepts = NULL) {
+OMOPCDMHelper$set("public", "bulk", function(tables = NULL, columns = NULL, concepts = NULL, silent = FALSE) {
   # If no column filter has been provided, warns the user
-  if (is.null(columns)) {
+  if (is.null(columns) && !silent) {
     warning(paste(
-      crayon::yellow("A column filter has not been provided."),
+      crayon::yellow("WARNING: A 'column' filter has not been provided."),
       crayon::red("This can significantly slow down operations!")
+    ), immediate. = TRUE)
+  }
+
+  # If no concept filter has been provided, warns the user
+  if (is.null(concepts) && !silent) {
+    warning(paste0(
+      crayon::yellow("WARNING: A 'concept' filter has not been provided. "),
+      crayon::red("This can significantly slow down operations if you do not intend to work with all available concepts!\n"),
+      crayon::yellow("If you are unsure about the available concepts, use the "),
+      crayon::green("`concepts()`"), crayon::yellow(" function to explore the available concepts.")
     ), immediate. = TRUE)
   }
   
   # If no tables are selected, assumes all person-related tables
-  if (is.null(tables)) {
+  if (is.null(tables) && !silent) {
+    # Warns the user about the potential performance impact
+    warning(paste0(
+      crayon::yellow("WARNING: No 'tables' have been specified. "),
+      crayon::red("This may slow down operations and append data you do not intend to use!\n"),
+      crayon::blue("The "), crayon::green("smart table selector"),
+      crayon::blue(" will locate all tables linkable to the 'person' table...")
+    ), immediate. = TRUE)
+
+    # Retrieves the available tables from the server
     tables <- unique(tolower(unlist(unname(self$tables()))))
   }
 
