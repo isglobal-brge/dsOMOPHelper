@@ -17,6 +17,7 @@ OMOPCDMHelper <- R6::R6Class("OMOPCDMHelper",
   )
 )
 
+
 #' @export
 ds.omop.helper <- function(connections, resource, symbol, personColumns = NULL, personFilter = NULL) {
   OMOPCDMHelper$new(connections, resource, symbol, personColumns, personFilter)
