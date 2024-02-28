@@ -1,9 +1,5 @@
 #' @export
-OMOPCDMHelper$set("public", "bulk", function(tables, columns = NULL, concepts = NULL) {
-  if (is.null(tables) || length(tables) == 0) {
-    stop("The 'tables' parameter cannot be NULL or empty.")
-  }
-
+OMOPCDMHelper$set("public", "bulk", function(tables = NULL, columns = NULL, concepts = NULL) {
   # If no column filter has been provided, warns the user
   if (is.null(columns)) {
     warning(paste(
@@ -12,7 +8,10 @@ OMOPCDMHelper$set("public", "bulk", function(tables, columns = NULL, concepts = 
     ), immediate. = TRUE)
   }
   
-  # TODO: Smart table selector
+  # If no tables are selected, assumes all person-related tables
+  if (is.null(tables)) {
+    tables <- unique(tolower(unlist(unname(self$tables()))))
+  }
 
   # Eliminates duplicates in the list, case-insensitive
   tables <- unique(tolower(tables))
@@ -30,11 +29,17 @@ OMOPCDMHelper$set("public", "bulk", function(tables, columns = NULL, concepts = 
     # Attempts to append the data for each specified table
     tryCatch(
       {
-        self$append(
-          table = tableName,
-          columns = tableColumns,
-          concepts = concepts
-        )
+        # Retrieves the available columns for the table
+        availableColumns <- unique(tolower(unlist(unname(self$columns(tableName)))))
+
+        # If the 'person_id' column is available, appends the table
+        if ("person_id" %in% availableColumns) {
+          self$append(
+            table = tableName,
+            columns = tableColumns,
+            concepts = concepts
+          )
+        }
       },
       error = function(error) {
         # If a table fails to append, skips it
