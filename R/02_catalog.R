@@ -1,10 +1,28 @@
-#' @export
+#' @title Retrieve Tables from OMOP CDM Database
+#' @name OMOPCDMHelper-tables
+#' 
+#' @description This function fetches a list of all tables present in the OMOP CDM database.
+#' across all connected servers. It leverages the underlying OMOPCDMDatabase class
+#' to query the database and fetch the catalog of tables.
+#'
+#' @return A list containing the names of all tables available in the OMOP CDM database.
+#' 
 OMOPCDMHelper$set("public", "tables", function() {
   self$OMOPCDMDatabase$tables()
 })
 
 
-#' @export
+#' @title Retrieve Columns from OMOP CDM Database
+#' @name OMOPCDMHelper-columns
+#'
+#' @description This method fetches a comprehensive list of columns from specified or all tables within the OMOP CDM database.
+#' across all connected servers. It leverages the underlying OMOPCDMDatabase class
+#' to query the database and fetch the catalog of columns.
+#'
+#' @param tables Optional; a vector of table names to include in the operation. If NULL, all tables are considered.
+#' 
+#' @return A list containing the names of all columns available in the specified tables of the OMOP CDM database.
+#' 
 OMOPCDMHelper$set("public", "columns", function(tables = NULL) {
   # If no tables are selected, assumes all tables
   if (is.null(tables)) {
@@ -46,7 +64,17 @@ OMOPCDMHelper$set("public", "columns", function(tables = NULL) {
 })
 
 
-#' @export
+#' @title Retrieve Concepts Dictionary from OMOP CDM Database
+#' @name OMOPCDMHelper-concepts
+#' 
+#' @description This function fetches the dictionary of concepts from specified or all tables within the OMOP CDM database.
+#' across all connected servers. It leverages the underlying OMOPCDMDatabase class
+#' to query the database and fetch the catalog of concepts.
+#'
+#' @param tables Optional; a vector of table names to include in the operation. If NULL, all tables are considered.
+#' 
+#' @return A list containing the concepts available in the specified tables of the OMOP CDM database.
+#' 
 OMOPCDMHelper$set("public", "concepts", function(tables = NULL) {
   # If no tables are selected, assumes all tables
   if (is.null(tables)) {

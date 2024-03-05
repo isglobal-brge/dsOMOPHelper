@@ -1,3 +1,17 @@
+#' @title Append a table to the base table
+#' @name OMOPCDMHelper-append
+#' 
+#' @description This function appends a specified table from the OMOP CDM database to the base table, with options to filter
+#' columns, apply concept filters, and specify merge conditions.
+#'
+#' @param table A character string specifying the name of the table to append data to.
+#' @param columns Optional; a vector of column names to include in the operation.
+#' @param concepts Optional; a list of concept IDs to filter the data by.
+#' @param merge.x Optional; a character string specifying the column name in the base table to merge on.
+#' @param merge.y Optional; a character string specifying the column name in the target table to merge on.
+#'
+#' @return The function does not return a value but modifies the database by appending data to the specified table.
+#'
 OMOPCDMHelper$set("public", "append", function(table, 
                                                columns = NULL, 
                                                concepts = NULL, 
