@@ -2,7 +2,7 @@
 
 ## Introduction
 
-<img src="doc/img/dsomophelper_logo.png" align="left" height="140" style="margin-right: 10px;" />
+<img src="man/figures/dsomophelper_logo.png" align="left" height="140" style="margin-right: 10px;" />
 
 The `dsOMOPHelper` package is an extension of [**`dsOMOPClient`**](https://github.com/isglobal-brge/dsOMOPClient), designed to streamline the interaction with databases in the [Observational Medical Outcomes Partnership (OMOP) Common Data Model (CDM)](https://www.ohdsi.org/data-standardization/) format within the [DataSHIELD](https://datashield.org/) environment. This package simplifies the process of fetching tables and integrating them into the DataSHIELD workflow, adhering to the privacy standards and disclosure control mechanisms of DataSHIELD.
 
