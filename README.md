@@ -26,6 +26,11 @@ You can then install the `dsOMOPHelper` package using the following command in R
 devtools::install_github('isglobal-brge/dsOMOPHelper')
 ```
 
+Once the package is installed, you can load it into your R environment using the following command:
+```
+library(dsOMOPHelper)
+```
+
 ## Acknowledgements
 
 - The development of dsOMOP has been supported by the **[RadGen4COPD](https://github.com/isglobal-brge/RadGen4COPD)**, **[P4COPD](https://www.clinicbarcelona.org/en/projects-and-clinical-assays/detail/p4copd-prediction-prevention-personalized-and-precision-management-of-copd-in-young-adults)**, and **[DATOS-CAT](https://datos-cat.github.io/LandingPage)** projects. These collaborations have not only provided essential financial backing but have also affirmed the project's relevance and application in significant research endeavors.
