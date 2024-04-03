@@ -21,9 +21,8 @@ The `dsOMOPHelper` package can be installed directly from GitHub using the `devt
 install.packages("devtools")
 ```
 
-You can then install the `dsOMOPHelper` package using the following commands in R:
+You can then install the `dsOMOPHelper` package using the following command in R:
 ```
-library(devtools)
 devtools::install_github('isglobal-brge/dsOMOPHelper')
 ```
 
