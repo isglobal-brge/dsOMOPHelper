@@ -103,7 +103,7 @@ An object of class OMOPCDMHelper.
 \if{latex}{\out{\hypertarget{method-OMOPCDMHelper-concepts}{}}}
 \subsection{Method \code{concepts()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OMOPCDMHelper$concepts(tables = NULL, max_length = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{OMOPCDMHelper$concepts(tables = NULL, max_length = 60)}\if{html}{\out{</div>}}
 }
 
 }
