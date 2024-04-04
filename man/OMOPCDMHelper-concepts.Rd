@@ -5,6 +5,8 @@
 \title{Retrieve Concepts Dictionary from OMOP CDM Database}
 \arguments{
 \item{tables}{Optional; a vector of table names to include in the operation. If NULL, all tables are considered.}
+
+\item{max_length}{Optional; an integer specifying the maximum length of the concept names. If NULL, no truncation is performed.}
 }
 \value{
 A list containing the concepts available in the specified tables of the OMOP CDM database.

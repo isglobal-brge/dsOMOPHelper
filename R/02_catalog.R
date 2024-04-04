@@ -72,10 +72,11 @@ OMOPCDMHelper$set("public", "columns", function(tables = NULL) {
 #' to query the database and fetch the catalog of concepts.
 #'
 #' @param tables Optional; a vector of table names to include in the operation. If NULL, all tables are considered.
+#' @param max_length Optional; an integer specifying the maximum length of the concept names. If NULL, no truncation is performed.
 #' 
 #' @return A list containing the concepts available in the specified tables of the OMOP CDM database.
 #' 
-OMOPCDMHelper$set("public", "concepts", function(tables = NULL) {
+OMOPCDMHelper$set("public", "concepts", function(tables = NULL, max_length = NULL) {
   # If no tables are selected, assumes all tables
   if (is.null(tables)) {
     tables <- self$tables()
@@ -115,6 +116,26 @@ OMOPCDMHelper$set("public", "concepts", function(tables = NULL) {
   # If the columns list is empty, throws an error
   if (length(conceptsList) == 0) {
     stop(crayon::red("No concepts could be found for the requested tables in any of the servers!"))
+  }
+
+  # Remove row names for all elements in the conceptsList
+  for (i in seq_along(conceptsList)) {
+    row.names(conceptsList[[i]]) <- NULL
+  }
+
+  # Truncate concept names if max_length is specified
+  if (!is.null(max_length)) {
+    for (i in seq_along(conceptsList)) {
+      if ("concept_name" %in% colnames(conceptsList[[i]])) {
+        conceptsList[[i]]$concept_name <- sapply(conceptsList[[i]]$concept_name, function(name) {
+          if (nchar(name) > max_length) {
+            return(paste0(substr(name, 1, max_length - 3), "..."))
+          } else {
+            return(name)
+          }
+        })
+      }
+    }
   }
   
   return(conceptsList)
