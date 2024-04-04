@@ -3,7 +3,7 @@ Title: dsOMOP Helper Functions
 Version: 1.0.0
 Authors@R:
     c(person("David", "Sarrat González", , "david.sarrat@isglobal.org", role = c("aut", "cre")),
-      person("Xavier", "Escribà Montagut", , "xavier.escriba@isglobal.org", role = c("aut")),
+      person("Xavier", "Escribà-Montagut", , "xavier.escriba@isglobal.org", role = c("aut")),
       person("Juan R", "González", , "juanr.gonzalez@isglobal.org", role = c("aut")))
 Description: This package provides a set of functions to help the user to work with the `dsOMOPClient` package in DataSHIELD.
     It provides plug-and-play functionalities for data selection and fetching, streamlining interactions with most simple use cases.
