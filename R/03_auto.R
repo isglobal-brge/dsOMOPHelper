@@ -68,7 +68,7 @@ OMOPCDMHelper$set("public", "auto", function(tables = NULL, columns = NULL, conc
 #'
 #' This function generates a list of column names for a specified table, optionally prefixing them with the table name.
 #' It is designed to handle cases where no column names are provided, in which case it simply returns NULL.
-#' The function also removes the "_occurrence" suffix from the table name before prefixing, ensuring a cleaner column name output.
+#' The function also removes the "_occurrence" and "_exposure" suffixes from the table name before prefixing, ensuring a cleaner column name output.
 #'
 #' @param tableName A character string specifying the name of the table.
 #' @param columnNames An optional vector of column names to include in the operation.
@@ -84,6 +84,7 @@ generateTableColumns <- function(tableName, columnNames) {
 
   tableName <- tolower(tableName) # Converts the table name to lowercase
   tableName <- gsub("_occurrence", "", tableName) # Removes the "_occurrence" suffix
+  tableName <- gsub("_exposure", "", tableName) # Removes the "_exposure" suffix
 
   # Generates the column names with the table name as a prefix
   columnsWithPrefix <- sapply(columnNames, function(columnName) {

@@ -18,5 +18,5 @@ the function returns NULL.
 \description{
 This function generates a list of column names for a specified table, optionally prefixing them with the table name.
 It is designed to handle cases where no column names are provided, in which case it simply returns NULL.
-The function also removes the "_occurrence" suffix from the table name before prefixing, ensuring a cleaner column name output.
+The function also removes the "_occurrence" and "_exposure" suffixes from the table name before prefixing, ensuring a cleaner column name output.
 }
