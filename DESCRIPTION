@@ -17,3 +17,7 @@ Imports:
 Remotes:
     datashield/dsBaseClient,
     isglobal-brge/dsOMOPClient
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
