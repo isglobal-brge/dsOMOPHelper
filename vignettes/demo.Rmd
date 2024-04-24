@@ -115,8 +115,6 @@ As we can see, the table `mimiciv` now contains information from the `Condition_
 
 In this section, we will explore some examples of how we can use the data extraction functions of `dsOMOPHelper` in conjunction with DataSHIELD's environment functions to manipulate and analyze the data. 
 
-`dsOMOP` sequences the longitudinal data in different columns if it detects several occurrences of a certain type of variable associated with the same `person_id`. We will not be doing any aggregation of the data for this example, but instead, we will be working with the first occurrence of each kind of variable. This is why we will be using the suffix `.1` in the variable names.
-
 Let's say we want to add the observation `Marital status [NHANES]` to our study table. To do this, we first need to identify the corresponding concept, which in this case is `40766231` and is found in the `Observation` table of the database. In this instance, since we are only interested in its primary value and it is a categorical variable, we aim to retrieve data from the `value_as_concept_id` column.
 
 Our call to the `auto` function would be as follows:
@@ -126,7 +124,7 @@ o$auto(tables = c("observation"),
        concepts = c(40766231),
        columns = c("value_as_concept_id"))
 
-ds.summary("mimiciv$marital_status_nhanes.1.value_as_concept_id")
+ds.summary("mimiciv$marital_status_nhanes.value_as_concept_id")
 ```
 
 As we can see, we have successfully obtained a categorical variable containing the marital status information of the patients, specifically with the following categories: `divorced`, `married`, `never_married`, `widowed`.
@@ -134,7 +132,7 @@ As we can see, we have successfully obtained a categorical variable containing t
 Now, we can use the `ds.table` function from `dsBaseClient` to obtain a frequency table of that same variable:
 
 ```{r table_observation, warning=FALSE}
-ds.table("mimiciv$marital_status_nhanes.1.value_as_concept_id")
+ds.table("mimiciv$marital_status_nhanes.value_as_concept_id")
 ```
 
 Next, we aim to extract a numerical variable, for instance, `Body weight`, which is identified by the concept ID `3025315` and is located in the `Measurement` table. In this scenario, our goal is to retrieve data from the `value_as_number` column.
@@ -146,7 +144,7 @@ o$auto(tables = c("measurement"),
        concepts = c(3025315),
        columns = c("value_as_number"))
 
-ds.summary("mimiciv$body_weight.1.value_as_number")
+ds.summary("mimiciv$body_weight.value_as_number")
 ```
 
 As we can see, we have successfully obtained a numerical variable that contains the body weight of the patients.
@@ -154,7 +152,7 @@ As we can see, we have successfully obtained a numerical variable that contains 
 To visually inspect the distribution of that same variable, we can generate a histogram using the `ds.histogram` function from `dsBaseClient`:
 
 ```{r histogram_measurement, warning=FALSE}
-ds.histogram("mimiciv$body_weight.1.value_as_number")
+ds.histogram("mimiciv$body_weight.value_as_number")
 ```
 
 Finally, we will perform a generalized linear regression (GLM) analysis to evaluate the relationship between blood glucose, hemoglobin A1c, and vitamin B12. To do this, we first need to extract the variables of interest from the corresponding tables, which are present in the `Measurement` table.
@@ -168,9 +166,9 @@ o$auto(tables = c("measurement"),
        concepts = c(3000483, 3004410, 3000593),
        columns = c("value_as_number"))
 
-ds.glm(formula = "glucose_mass_volume_in_blood.1.value_as_number ~ 
-                  hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number + 
-                  cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number",
+ds.glm(formula = "glucose_mass_volume_in_blood.value_as_number ~ 
+                  hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number + 
+                  cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number",
        data = "mimiciv",
        family = "gaussian",
        datasources = conns)

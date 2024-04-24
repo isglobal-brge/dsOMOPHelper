@@ -316,12 +316,6 @@ variables of interest.</p>
 data extraction functions of <code>dsOMOPHelper</code> in conjunction
 with DataSHIELD’s environment functions to manipulate and analyze the
 data.</p>
-<p><code>dsOMOP</code> sequences the longitudinal data in different
-columns if it detects several occurrences of a certain type of variable
-associated with the same <code>person_id</code>. We will not be doing
-any aggregation of the data for this example, but instead, we will be
-working with the first occurrence of each kind of variable. This is why
-we will be using the suffix <code>.1</code> in the variable names.</p>
 <p>Let’s say we want to add the observation
 <code>Marital status [NHANES]</code> to our study table. To do this, we
 first need to identify the corresponding concept, which in this case is
@@ -335,7 +329,7 @@ from the <code>value_as_concept_id</code> column.</p>
 <span>       concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40766231</span><span class="op">)</span>,</span>
 <span>       columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"value_as_concept_id"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"mimiciv$marital_status_nhanes.1.value_as_concept_id"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"mimiciv$marital_status_nhanes.value_as_concept_id"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $brge</span></span>
 <span><span class="co">## $brge$class</span></span>
 <span><span class="co">## [1] "factor"</span></span>
@@ -366,46 +360,46 @@ with the following categories: <code>divorced</code>,
 <code>dsBaseClient</code> to obtain a frequency table of that same
 variable:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.table.html" class="external-link">ds.table</a></span><span class="op">(</span><span class="st">"mimiciv$marital_status_nhanes.1.value_as_concept_id"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.table.html" class="external-link">ds.table</a></span><span class="op">(</span><span class="st">"mimiciv$marital_status_nhanes.value_as_concept_id"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Data in all studies were valid </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Study 1 :  No errors reported from this study</span></span></code></pre>
 <pre><code><span><span class="co">## $output.list</span></span>
 <span><span class="co">## $output.list$TABLE_rvar.by.study_row.props</span></span>
-<span><span class="co">##                                                    study</span></span>
-<span><span class="co">## mimiciv$marital_status_nhanes.1.value_as_concept_id brge</span></span>
-<span><span class="co">##                                       divorced         1</span></span>
-<span><span class="co">##                                       married          1</span></span>
-<span><span class="co">##                                       never_married    1</span></span>
-<span><span class="co">##                                       widowed          1</span></span>
-<span><span class="co">##                                       NA               1</span></span>
+<span><span class="co">##                                                  study</span></span>
+<span><span class="co">## mimiciv$marital_status_nhanes.value_as_concept_id brge</span></span>
+<span><span class="co">##                                     divorced         1</span></span>
+<span><span class="co">##                                     married          1</span></span>
+<span><span class="co">##                                     never_married    1</span></span>
+<span><span class="co">##                                     widowed          1</span></span>
+<span><span class="co">##                                     NA               1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $output.list$TABLE_rvar.by.study_col.props</span></span>
-<span><span class="co">##                                                    study</span></span>
-<span><span class="co">## mimiciv$marital_status_nhanes.1.value_as_concept_id brge</span></span>
-<span><span class="co">##                                       divorced      0.10</span></span>
-<span><span class="co">##                                       married       0.37</span></span>
-<span><span class="co">##                                       never_married 0.30</span></span>
-<span><span class="co">##                                       widowed       0.13</span></span>
-<span><span class="co">##                                       NA            0.10</span></span>
+<span><span class="co">##                                                  study</span></span>
+<span><span class="co">## mimiciv$marital_status_nhanes.value_as_concept_id brge</span></span>
+<span><span class="co">##                                     divorced      0.10</span></span>
+<span><span class="co">##                                     married       0.37</span></span>
+<span><span class="co">##                                     never_married 0.30</span></span>
+<span><span class="co">##                                     widowed       0.13</span></span>
+<span><span class="co">##                                     NA            0.10</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $output.list$TABLE_rvar.by.study_counts</span></span>
-<span><span class="co">##                                                    study</span></span>
-<span><span class="co">## mimiciv$marital_status_nhanes.1.value_as_concept_id brge</span></span>
-<span><span class="co">##                                       divorced        10</span></span>
-<span><span class="co">##                                       married         37</span></span>
-<span><span class="co">##                                       never_married   30</span></span>
-<span><span class="co">##                                       widowed         13</span></span>
-<span><span class="co">##                                       NA              10</span></span>
+<span><span class="co">##                                                  study</span></span>
+<span><span class="co">## mimiciv$marital_status_nhanes.value_as_concept_id brge</span></span>
+<span><span class="co">##                                     divorced        10</span></span>
+<span><span class="co">##                                     married         37</span></span>
+<span><span class="co">##                                     never_married   30</span></span>
+<span><span class="co">##                                     widowed         13</span></span>
+<span><span class="co">##                                     NA              10</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $output.list$TABLES.COMBINED_all.sources_proportions</span></span>
-<span><span class="co">## mimiciv$marital_status_nhanes.1.value_as_concept_id</span></span>
+<span><span class="co">## mimiciv$marital_status_nhanes.value_as_concept_id</span></span>
 <span><span class="co">##      divorced       married never_married       widowed            NA </span></span>
 <span><span class="co">##          0.10          0.37          0.30          0.13          0.10 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $output.list$TABLES.COMBINED_all.sources_counts</span></span>
-<span><span class="co">## mimiciv$marital_status_nhanes.1.value_as_concept_id</span></span>
+<span><span class="co">## mimiciv$marital_status_nhanes.value_as_concept_id</span></span>
 <span><span class="co">##      divorced       married never_married       widowed            NA </span></span>
 <span><span class="co">##            10            37            30            13            10 </span></span>
 <span><span class="co">## </span></span>
@@ -423,7 +417,7 @@ table. In this scenario, our goal is to retrieve data from the
 <span>       concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3025315</span><span class="op">)</span>,</span>
 <span>       columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"value_as_number"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"mimiciv$body_weight.1.value_as_number"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"mimiciv$body_weight.value_as_number"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $brge</span></span>
 <span><span class="co">## $brge$class</span></span>
 <span><span class="co">## [1] "numeric"</span></span>
@@ -433,29 +427,29 @@ table. In this scenario, our goal is to retrieve data from the
 <span><span class="co">## </span></span>
 <span><span class="co">## $brge$`quantiles &amp; mean`</span></span>
 <span><span class="co">##      5%     10%     25%     50%     75%     90%     95%    Mean </span></span>
-<span><span class="co">##  52.745  59.620  68.900  79.700  97.075 121.650 148.640  86.576</span></span></code></pre>
+<span><span class="co">##  52.745  59.620  68.000  77.850  93.275 104.300 117.150  80.254</span></span></code></pre>
 <p>As we can see, we have successfully obtained a numerical variable
 that contains the body weight of the patients.</p>
 <p>To visually inspect the distribution of that same variable, we can
 generate a histogram using the <code>ds.histogram</code> function from
 <code>dsBaseClient</code>:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.histogram.html" class="external-link">ds.histogram</a></span><span class="op">(</span><span class="st">"mimiciv$body_weight.1.value_as_number"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.histogram.html" class="external-link">ds.histogram</a></span><span class="op">(</span><span class="st">"mimiciv$body_weight.value_as_number"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="demo_files/figure-html/histogram_measurement-1.png" width="700"></p>
 <pre><code><span><span class="co">## $breaks</span></span>
-<span><span class="co">##  [1]  38.91912  55.14396  71.36879  87.59363 103.81847 120.04330 136.26814</span></span>
-<span><span class="co">##  [8] 152.49297 168.71781 184.94265 201.16748</span></span>
+<span><span class="co">##  [1]  38.91912  49.55597  60.19282  70.82967  81.46652  92.10337 102.74022</span></span>
+<span><span class="co">##  [8] 113.37707 124.01392 134.65078 145.28763</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $counts</span></span>
-<span><span class="co">##  [1]  8 26 29 19  7  4  0  0  3  0</span></span>
+<span><span class="co">##  [1]  4  8 20 29 13 13  6  5  0  0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $density</span></span>
-<span><span class="co">##  [1] 0.004930712 0.016024815 0.017873832 0.011710442 0.004314373</span></span>
-<span><span class="co">##  [6] 0.002465356 0.000000000 0.000000000 0.001849017 0.000000000</span></span>
+<span><span class="co">##  [1] 0.003760512 0.007521023 0.018802558 0.027263710 0.012221663</span></span>
+<span><span class="co">##  [6] 0.012221663 0.005640767 0.004700640 0.000000000 0.000000000</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $mids</span></span>
-<span><span class="co">##  [1]  47.03154  63.25638  79.48121  95.70605 111.93088 128.15572 144.38056</span></span>
-<span><span class="co">##  [8] 160.60539 176.83023 193.05506</span></span>
+<span><span class="co">##  [1]  44.23755  54.87440  65.51125  76.14810  86.78495  97.42180 108.05865</span></span>
+<span><span class="co">##  [8] 118.69550 129.33235 139.96920</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $xname</span></span>
 <span><span class="co">## [1] "xvect"</span></span>
@@ -487,9 +481,9 @@ linear regression analysis:</p>
 <span>       concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3000483</span>, <span class="fl">3004410</span>, <span class="fl">3000593</span><span class="op">)</span>,</span>
 <span>       columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"value_as_number"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.glm.html" class="external-link">ds.glm</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="st">"glucose_mass_volume_in_blood.1.value_as_number ~ </span></span>
-<span><span class="st">                  hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number + </span></span>
-<span><span class="st">                  cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.glm.html" class="external-link">ds.glm</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="st">"glucose_mass_volume_in_blood.value_as_number ~ </span></span>
+<span><span class="st">                  hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number + </span></span>
+<span><span class="st">                  cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number"</span>,</span>
 <span>       data <span class="op">=</span> <span class="st">"mimiciv"</span>,</span>
 <span>       family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
 <span>       datasources <span class="op">=</span> <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
@@ -506,24 +500,24 @@ linear regression analysis:</p>
 <span><span class="co">## beta: 120.958893279016 0.82795236254575 -0.0161066743745843</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Information matrix overall:</span></span></code></pre>
-<pre><code><span><span class="co">##                                                                        (Intercept)</span></span>
-<span><span class="co">## (Intercept)                                                                   10.0</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number                    65.4</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number      7434.0</span></span>
-<span><span class="co">##                                                                        hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number</span></span>
-<span><span class="co">## (Intercept)                                                                                                                 65.40</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number                                                                 451.24</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number                                                   47292.00</span></span>
-<span><span class="co">##                                                                        cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number</span></span>
-<span><span class="co">## (Intercept)                                                                                                                              7434</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number                                                                              47292</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number                                                                7317894</span></span></code></pre>
+<pre><code><span><span class="co">##                                                                      (Intercept)</span></span>
+<span><span class="co">## (Intercept)                                                                 10.0</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number                    65.4</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number      7434.0</span></span>
+<span><span class="co">##                                                                      hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number</span></span>
+<span><span class="co">## (Intercept)                                                                                                             65.40</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number                                                               451.24</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number                                                 47292.00</span></span>
+<span><span class="co">##                                                                      cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number</span></span>
+<span><span class="co">## (Intercept)                                                                                                                          7434</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number                                                                            47292</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number                                                              7317894</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Score vector overall:</span></span></code></pre>
-<pre><code><span><span class="co">##                                                                                 [,1]</span></span>
-<span><span class="co">## (Intercept)                                                            -2.799538e-12</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number             -1.841727e-11</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number -2.106390e-09</span></span></code></pre>
+<pre><code><span><span class="co">##                                                                               [,1]</span></span>
+<span><span class="co">## (Intercept)                                                          -2.799538e-12</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             -1.841727e-11</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number -2.106390e-09</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Current deviance: 21068.1496506415</span></span></code></pre>
 <pre><code><span><span class="co">## $Nvalid</span></span>
@@ -556,33 +550,33 @@ linear regression analysis:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $formula</span></span>
-<span><span class="co">## [1] "glucose_mass_volume_in_blood.1.value_as_number ~ hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number +      cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number"</span></span>
+<span><span class="co">## [1] "glucose_mass_volume_in_blood.value_as_number ~ hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number +      cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $coefficients</span></span>
-<span><span class="co">##                                                                            Estimate</span></span>
-<span><span class="co">## (Intercept)                                                            120.95889328</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number               0.82795236</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number  -0.01610667</span></span>
-<span><span class="co">##                                                                         Std. Error</span></span>
-<span><span class="co">## (Intercept)                                                            89.11697092</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number             11.55494959</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number  0.04187167</span></span>
-<span><span class="co">##                                                                            z-value</span></span>
-<span><span class="co">## (Intercept)                                                             1.35730481</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number              0.07165348</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number -0.38466759</span></span>
-<span><span class="co">##                                                                          p-value</span></span>
-<span><span class="co">## (Intercept)                                                            0.1746844</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number             0.9428777</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number 0.7004837</span></span>
-<span><span class="co">##                                                                           low0.95CI</span></span>
-<span><span class="co">## (Intercept)                                                            -53.70716014</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number             -21.81933267</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number  -0.09817364</span></span>
-<span><span class="co">##                                                                          high0.95CI</span></span>
-<span><span class="co">## (Intercept)                                                            295.62494670</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.1.value_as_number              23.47523740</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.1.value_as_number   0.06596029</span></span>
+<span><span class="co">##                                                                          Estimate</span></span>
+<span><span class="co">## (Intercept)                                                          120.95889328</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number               0.82795236</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  -0.01610667</span></span>
+<span><span class="co">##                                                                       Std. Error</span></span>
+<span><span class="co">## (Intercept)                                                          89.11697092</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             11.55494959</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  0.04187167</span></span>
+<span><span class="co">##                                                                          z-value</span></span>
+<span><span class="co">## (Intercept)                                                           1.35730481</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number              0.07165348</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number -0.38466759</span></span>
+<span><span class="co">##                                                                        p-value</span></span>
+<span><span class="co">## (Intercept)                                                          0.1746844</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             0.9428777</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number 0.7004837</span></span>
+<span><span class="co">##                                                                         low0.95CI</span></span>
+<span><span class="co">## (Intercept)                                                          -53.70716014</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             -21.81933267</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  -0.09817364</span></span>
+<span><span class="co">##                                                                        high0.95CI</span></span>
+<span><span class="co">## (Intercept)                                                          295.62494670</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number              23.47523740</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number   0.06596029</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $dev</span></span>
 <span><span class="co">## [1] 21068.15</span></span>
