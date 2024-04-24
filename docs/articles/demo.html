@@ -141,7 +141,7 @@ symbol, in this case, <code>mimiciv</code>:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"mimiciv"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $brge</span></span>
 <span><span class="co">## $brge$class</span></span>
-<span><span class="co">## [1] "omop.cdm.table" "data.frame"    </span></span>
+<span><span class="co">## [1] "data.frame"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $brge$`number of rows`</span></span>
 <span><span class="co">## [1] 100</span></span>
@@ -433,7 +433,7 @@ table. In this scenario, our goal is to retrieve data from the
 <span><span class="co">## </span></span>
 <span><span class="co">## $brge$`quantiles &amp; mean`</span></span>
 <span><span class="co">##      5%     10%     25%     50%     75%     90%     95%    Mean </span></span>
-<span><span class="co">##  52.745  59.620  68.000  77.850  93.275 104.300 117.150  80.254</span></span></code></pre>
+<span><span class="co">##  52.745  59.620  68.900  79.700  97.075 121.650 148.640  86.576</span></span></code></pre>
 <p>As we can see, we have successfully obtained a numerical variable
 that contains the body weight of the patients.</p>
 <p>To visually inspect the distribution of that same variable, we can
@@ -443,19 +443,19 @@ generate a histogram using the <code>ds.histogram</code> function from
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.histogram.html" class="external-link">ds.histogram</a></span><span class="op">(</span><span class="st">"mimiciv$body_weight.1.value_as_number"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="demo_files/figure-html/histogram_measurement-1.png" width="700"></p>
 <pre><code><span><span class="co">## $breaks</span></span>
-<span><span class="co">##  [1]  38.91912  49.55597  60.19282  70.82967  81.46652  92.10337 102.74022</span></span>
-<span><span class="co">##  [8] 113.37707 124.01392 134.65078 145.28763</span></span>
+<span><span class="co">##  [1]  38.91912  55.14396  71.36879  87.59363 103.81847 120.04330 136.26814</span></span>
+<span><span class="co">##  [8] 152.49297 168.71781 184.94265 201.16748</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $counts</span></span>
-<span><span class="co">##  [1]  4  8 20 29 13 13  6  5  0  0</span></span>
+<span><span class="co">##  [1]  8 26 29 19  7  4  0  0  3  0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $density</span></span>
-<span><span class="co">##  [1] 0.003760512 0.007521023 0.018802558 0.027263710 0.012221663</span></span>
-<span><span class="co">##  [6] 0.012221663 0.005640767 0.004700640 0.000000000 0.000000000</span></span>
+<span><span class="co">##  [1] 0.004930712 0.016024815 0.017873832 0.011710442 0.004314373</span></span>
+<span><span class="co">##  [6] 0.002465356 0.000000000 0.000000000 0.001849017 0.000000000</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $mids</span></span>
-<span><span class="co">##  [1]  44.23755  54.87440  65.51125  76.14810  86.78495  97.42180 108.05865</span></span>
-<span><span class="co">##  [8] 118.69550 129.33235 139.96920</span></span>
+<span><span class="co">##  [1]  47.03154  63.25638  79.48121  95.70605 111.93088 128.15572 144.38056</span></span>
+<span><span class="co">##  [8] 160.60539 176.83023 193.05506</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $xname</span></span>
 <span><span class="co">## [1] "xvect"</span></span>
