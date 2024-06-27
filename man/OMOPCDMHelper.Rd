@@ -75,7 +75,8 @@ An object of class OMOPCDMHelper.
   columns = NULL,
   concepts = NULL,
   merge.x = NULL,
-  merge.y = NULL
+  merge.y = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -133,7 +134,8 @@ An object of class OMOPCDMHelper.
   conceptFilter = NULL,
   personFilter = NULL,
   mergeColumn = NULL,
-  dropNA = FALSE
+  dropNA = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 

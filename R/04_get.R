@@ -12,6 +12,7 @@
 #' @param mergeColumn An optional string specifying the column name for merging operations with other tables.
 #'                    Defaults to "person_id" if not specified.
 #' @param dropNA An optional boolean indicating whether to drop empty columns. Defaults to FALSE.
+#' @param ... Additional parameters to be passed to the underlying get method.
 #'
 #' @return Assigns the specified table to the DataSHIELD environment, optionally filtered and merged.
 #' 
@@ -21,7 +22,8 @@ OMOPCDMHelper$set("public", "get", function(table,
                                             conceptFilter = NULL, 
                                             personFilter = NULL, 
                                             mergeColumn = NULL, 
-                                            dropNA = FALSE) {
+                                            dropNA = FALSE, 
+                                            ...) {
     self$OMOPCDMDatabase$get(
     table = table,
     symbol = symbol,
@@ -29,6 +31,8 @@ OMOPCDMHelper$set("public", "get", function(table,
     conceptFilter = conceptFilter,
     personFilter = personFilter,
     mergeColumn = mergeColumn,
-    dropNA = dropNA
+    dropNA = dropNA,
+    ...
   )
 })
+

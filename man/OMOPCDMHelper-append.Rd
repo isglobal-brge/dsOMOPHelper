@@ -13,6 +13,8 @@
 \item{merge.x}{Optional; a character string specifying the column name in the base table to merge on.}
 
 \item{merge.y}{Optional; a character string specifying the column name in the target table to merge on.}
+
+\item{...}{Additional parameters to be passed to the underlying get method.}
 }
 \value{
 The function does not return a value but modifies the database by appending data to the specified table.

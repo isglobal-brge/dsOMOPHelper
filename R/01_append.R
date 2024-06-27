@@ -9,6 +9,7 @@
 #' @param concepts Optional; a list of concept IDs to filter the data by.
 #' @param merge.x Optional; a character string specifying the column name in the base table to merge on.
 #' @param merge.y Optional; a character string specifying the column name in the target table to merge on.
+#' @param ... Additional parameters to be passed to the underlying get method.
 #'
 #' @return The function does not return a value but modifies the database by appending data to the specified table.
 #'
@@ -16,7 +17,8 @@ OMOPCDMHelper$set("public", "append", function(table,
                                                columns = NULL, 
                                                concepts = NULL, 
                                                merge.x = NULL, 
-                                               merge.y = NULL) {  
+                                               merge.y = NULL, 
+                                               ...) {  
   # Generates a random string to use as the table symbol (it will be removed after the operation is done)
   generatedString <- paste0(sample(c(0:9, letters, LETTERS), 4, replace = TRUE), collapse = "")
   tableSymbol <- paste0("dsOH.", generatedString)
@@ -37,7 +39,8 @@ OMOPCDMHelper$set("public", "append", function(table,
     conceptFilter = concepts,
     personFilter = self$symbol,
     mergeColumn = merge.y,
-    dropNA = TRUE
+    dropNA = TRUE,
+    ...
   ) # This may return an error if filtering leaves the table empty
 
   tryCatch(

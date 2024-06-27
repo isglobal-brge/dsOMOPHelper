@@ -18,6 +18,8 @@
 Defaults to "person_id" if not specified.}
 
 \item{dropNA}{An optional boolean indicating whether to drop empty columns. Defaults to FALSE.}
+
+\item{...}{Additional parameters to be passed to the underlying get method.}
 }
 \value{
 Assigns the specified table to the DataSHIELD environment, optionally filtered and merged.
