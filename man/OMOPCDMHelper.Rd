@@ -117,7 +117,8 @@ An object of class OMOPCDMHelper.
   tables = NULL,
   columns = NULL,
   concepts = NULL,
-  silent = FALSE
+  silent = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 

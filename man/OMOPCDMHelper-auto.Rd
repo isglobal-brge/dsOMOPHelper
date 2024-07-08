@@ -12,6 +12,8 @@ If NULL, all person-related tables are considered except 'person' and 'concept'.
 \item{concepts}{Optional; a list of concept IDs to filter the data by.}
 
 \item{silent}{Optional; a boolean indicating whether to suppress warnings.}
+
+\item{...}{Additional arguments to pass to the append method.}
 }
 \description{
 This function automatically appends data from specified or all tables in the OMOP CDM database

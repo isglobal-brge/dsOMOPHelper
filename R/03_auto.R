@@ -10,8 +10,9 @@
 #' @param columns Optional; a vector of column names to include in the operation.
 #' @param concepts Optional; a list of concept IDs to filter the data by.
 #' @param silent Optional; a boolean indicating whether to suppress warnings.
+#' @param ... Additional arguments to pass to the append method.
 #' 
-OMOPCDMHelper$set("public", "auto", function(tables = NULL, columns = NULL, concepts = NULL, silent = FALSE) {
+OMOPCDMHelper$set("public", "auto", function(tables = NULL, columns = NULL, concepts = NULL, silent = FALSE, ...) {
   # If no tables are selected, assumes all person-related tables
   if (is.null(tables) && !silent) {
     # Warns the user about the potential performance impact
@@ -52,7 +53,8 @@ OMOPCDMHelper$set("public", "auto", function(tables = NULL, columns = NULL, conc
           self$append(
             table = tableName,
             columns = tableColumns,
-            concepts = concepts
+            concepts = concepts,
+            ...
           )
         }
       },
