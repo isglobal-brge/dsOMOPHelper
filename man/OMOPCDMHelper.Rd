@@ -40,7 +40,8 @@ Constructor for OMOP CDM Helper}
   resource,
   symbol,
   personColumns = NULL,
-  personFilter = NULL
+  personFilter = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -58,6 +59,8 @@ If a named list, the name of each resource identifier should correspond to the s
 
 \item{\code{personFilter}}{Optional; a character string representing another object in the DataSHIELD environment whose person IDs will be
 used to filter the processed data (this speeds up the processing of the data if not all the person IDs are needed).}
+
+\item{\code{...}}{Additional parameters to be passed to the underlying get method.}
 }
 \if{html}{\out{</div>}}
 }
