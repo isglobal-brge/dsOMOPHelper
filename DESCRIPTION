@@ -15,8 +15,8 @@ Imports:
     crayon,
     DSI
 Remotes:
-    datashield/dsBaseClient,
-    isglobal-brge/dsOMOPClient
+    github::datashield/dsBaseClient,
+    github::isglobal-brge/dsOMOPClient
 Suggests: 
     knitr,
     rmarkdown

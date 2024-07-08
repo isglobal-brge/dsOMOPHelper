@@ -35,4 +35,3 @@ OMOPCDMHelper$set("public", "get", function(table,
     ...
   )
 })
-
