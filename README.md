@@ -17,17 +17,17 @@ We strongly encourage the community to contribute by creating packages similar t
 To install the package `dsOMOPHelper`, follow the steps below. This guide assumes you have R installed on your system and the necessary permissions to install R packages.
 
 The `dsOMOPHelper` package can be installed directly from GitHub using the `devtools` package. If you do not have `devtools` installed, you can install it using the following command in R:
-```
+```R
 install.packages("devtools")
 ```
 
 You can then install the `dsOMOPHelper` package using the following command in R:
-```
+```R
 devtools::install_github('isglobal-brge/dsOMOPHelper')
 ```
 
 Once the package is installed, you can load it into your R environment using the following command:
-```
+```R
 library(dsOMOPHelper)
 ```
 
