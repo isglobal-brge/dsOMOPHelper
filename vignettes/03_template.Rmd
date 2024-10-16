@@ -1,26 +1,24 @@
 ---
-title: "Chronic Obstructive Pulmonary Disease (COPD) Analysis using dsOMOP"
+title: "Basic GLM with booleans template"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{02_copd}
+  %\VignetteIndexEntry{03_template}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-# Introduction
+# STEP 1: Server connection
 
-For this reproducibility analysis, we utilized the **Tufts Synthetic Dataset**, which consists of fully synthetic electronic health record (EHR) data representing 567,000 synthetic patients. This dataset was generated in 2021 through a collaboration between **Syntegra, Inc.** and **Tufts Medical Center**, using a deep learning transformer model. The model was trained on real-world EHR data from the **Tufts Research Data Warehouse (TRDW)**, which includes longitudinal clinical data from patients who received care at Tufts Medical Center. The Tufts Synthetic Dataset contains clinical information such as patient visits, conditions, medications, laboratory measurements, procedures, observations, and device exposures, all structured according to the OMOP Common Data Model (CDM) version 5.3.
+Change the credentials to your own:
 
-In this analysis, we focused on identifying key predictors for chronic obstructive pulmonary disease (COPD) based on their relevance in the literature and their availability and representation in our dataset, ensuring a sufficient patient population to obtain statistically meaningful results. These variables have well-established associations with COPD:
+```{r user_credentials}
+your_url <- "https://opal.isglobal.org/brge"
+your_user <- "administrator"
+your_password <- "password"
+your_resource <- "omop_demo.tufts"
+```
 
-- Tobacco use
-- Vitamin D deficiency
-- History of asthma
-- History of rheumatoid arthritis
-
-# Server connection
-
-We start by establishing a connection with ISGlobal's BRGE development Opal server. This Opal server is configured to allow access to a resource with the Tufts Synthetic Dataset:
+Then run the following code to connect to the server and create a database interface:
 
 ```{r server_connection, message=FALSE, warning=FALSE}
 library(DSI)
@@ -32,36 +30,68 @@ library(dsOMOPHelper)
 builder <- newDSLoginBuilder()
 
 builder$append(server="server1", 
-               url="https://opal.isglobal.org/brge",
-               user="administrator", 
-               password="password", 
+               url=your_url,
+               user=your_user, 
+               password=your_password, 
                driver = "OpalDriver")
 
 logindata <- builder$build()
+
 conns <- datashield.login(logins=logindata)
-```
 
-Then we create an instance of `dsOMOPHelper` to interact with the database and build our desired dataset:
-
-```{r dsOMOPHelper_instance, message=FALSE, warning=FALSE}
 o <- ds.omop.helper(
     connections = conns,
-    resource = "omop_demo.tufts", 
-    symbol = "tufts"
+    resource = your_resource, 
+    symbol = "original_dataset"
 )
 ```
 
-# Dataset construction
+# STEP 2: Dataset exploration
+
+We will first retrieve the concept catalogs for conditions and observations:
+
+```{r dataset_exploration}
+condition_list <- o$concepts("condition_occurrence", .Machine$integer.max)$server1
+observation_list <- o$concepts("observation", .Machine$integer.max)$server1
+```
+
+Now you can explore the available concepts and decide which ones you want to use in your analysis.
+
+We strongly recommend saving these lists to CSV files and exploring them in a comfortable environment. This will allow you to identify the exact name of the variables you want to use in your analysis:
+
+```{r write_csv, eval=FALSE}
+write.csv(condition_list, file = "condition_list.csv", row.names = FALSE)
+write.csv(observation_list, file = "observation_list.csv", row.names = FALSE)
+```
+
+Otherwise, you can check the concept catalogs directly by printing them:
+
+```{r head_concept_catalogs, echo=FALSE}
+# Keep only the first 5 rows of condition_list for the demo
+condition_list <- head(condition_list, 5)
+# Keep only the first 5 rows of observation_list for the demo
+observation_list <- head(observation_list, 5)
+```
+```{r print_concept_catalogs}
+print(condition_list)
+print(observation_list)
+```
+
+(The actual concept list will be much longer, this is just for demonstration purposes)
+
+# STEP 3: Dataset construction
 
 ## Variable definition
 
-We will define the variables that will be present in our dataset. These variables include our outcome variable and the predictor variables we'll use in our generalized linear model (GLM) for COPD:
+Define the outcome variable (from the `condition_list`):
 
-```{r define_variables, message=FALSE, warning=FALSE}
-# Outcome variable
+```{r define_variables_outcome}
 outcome_concept_id <- 255573 # Chronic Obstructive Pulmonary Disease (COPD)
+```
 
-# Predictor variables
+Define the predictor variables (conditions from the `condition_list` and observations from the `observation_list`):
+
+```{r define_variables_predictors}
 observation_list <- c(
     4005823 # Tobacco use
 )
@@ -71,18 +101,17 @@ condition_list <- c(
     436070, # Rheumatoid arthritis
     80809   # Vitamin D deficiency
 )
-
-# We check the structure of the resulting table to ensure it is correctly loaded
-ds.summary("tufts")
 ```
 
-Based on the structure of this script, we can easily change the concept IDs of the variables and re-run this script to analyze different conditions or predictors.
+From this point, the script will perform the rest of the process automatically. You can tweak the previous settings to fit your needs. 
 
-## Data retrieval
+# Automatic dataset construction
 
-We use `dsOMOPHelper`'s `auto` function to retrieve the defined variables: 
+The script will perform the following steps automatically:
 
-```{r data_retrieval, message=FALSE, warning=FALSE}
+1. Retrieve the variables from the database:
+
+```{r data_retrieval}
 o$auto(
     table = "condition_occurrence", 
     concepts = c(outcome_concept_id, condition_list),
@@ -100,11 +129,7 @@ o$auto(
 )
 ```
 
-## Concept name matching
-
-We need to identify the format of the concept names as they will be added to the dataset. This allows us to automate the process of identifying exact variable names based on the retrieved concept names from the database, which facilitates automation without having to manually change the variable names in the script. 
-
-The function `custom_make_names` is used to format the concept names as they would be in the dataset:
+2. Match the concept IDs to the concept catalogs:
 
 ```{r custom_make_names}
 custom_make_names <- function(name) {
@@ -115,11 +140,7 @@ custom_make_names <- function(name) {
   name <- gsub("^_|_$", "", name)
   return(name)
 }
-```
 
-Now we can retrieve the concept lists from the database and match them to the names as we expect them to be in the dataset:
-
-```{r concept_matching, message=FALSE, warning=FALSE}
 # Retrieve the concept catalogs for condition occurrence and observation
 all_concepts_condition <- o$concepts("condition_occurrence", .Machine$integer.max)$server1
 all_concepts_observation <- o$concepts("observation", .Machine$integer.max)$server1
@@ -130,20 +151,12 @@ matched_concepts_conditions <- all_concepts_condition[all_concepts_condition$con
 matched_concepts_observation <- all_concepts_observation[all_concepts_observation$concept_id %in% observation_list, ]
 ```
 
-These will be used to automatically match the variable names in the dataset in the next step.
+3. Convert the variables to boolean:
 
-## Data type conversions
-
-DataSHIELD will not transform an ID to a boolean if it is in a string format, so this process involves two steps:
-1. Transforming the ID to numeric
-2. Transforming the numeric ID to boolean
-
-we have defined a function to do this automatically for every variable:
-
-```{r convert_to_numeric_and_boolean, message=FALSE, warning=FALSE}
+```{r convert_to_numeric_and_boolean}
 convert_to_numeric_and_boolean <- function(variable_name, id_type, conns) {
-  # Construct the full variable name in the format "tufts$variable_name.id_type"
-  full_variable_name <- paste0("tufts$", variable_name, ".", id_type)
+  # Construct the full variable name in the format "original_dataset$variable_name.id_type"
+  full_variable_name <- paste0("original_dataset$", variable_name, ".", id_type)
   # Create a new variable name for the numeric conversion
   new_numeric_name <- paste0(variable_name, "_numeric")
   
@@ -166,11 +179,7 @@ convert_to_numeric_and_boolean <- function(variable_name, id_type, conns) {
     newobj = variable_name
   )
 }
-```
 
-Now we can apply this function to the selected variables:
-
-```{r automatic_type_conversion, message=FALSE, warning=FALSE}
 # Get the name of the outcome variable as it will be in the dataset
 outcome_variable <- custom_make_names(matched_concept_condition$concept_name)
 # Perform the type conversion of the outcome variable to numeric and then to boolean
@@ -195,11 +204,9 @@ for (concept in matched_concepts_observation$concept_name) {
 }
 ```
 
-## Create table for the GLM
+4. Create a new table with the prepared outcome and predictors:
 
-We create a new table with the prepared outcome and predictors for the GLM:
-
-```{r create_glm_table, message=FALSE, warning=FALSE}
+```{r create_glm_table}
 # Get the exact name of the variables as they will be in the dataset
 variable_names <- c(
   unname(sapply(matched_concepts_observation$concept_name, custom_make_names)),
@@ -214,14 +221,11 @@ ds.cbind(
   newobj = "glm_table",
   datasources = conns
 )
-
-# We check the structure of the resulting table to ensure it has been created correctly
-ds.summary("glm_table")
 ```
 
 # Generalized Linear Model
 
-Now, we can finally execute the final step - running the GLM on our prepared dataset:
+It then runs the GLM with the prepared dataset:
 
 ```{r glm, warning=FALSE}
 # Define the formula for the GLM
@@ -243,5 +247,3 @@ ds.glm(
   family = "binomial"
 )
 ```
-
-In the next chapter, we will provide a template for creating these analysis for other conditions and predictors. This will allow you to easily adapt the analysis to your specific needs, for any OMOP CDM database.
