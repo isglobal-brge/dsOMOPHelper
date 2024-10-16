@@ -83,6 +83,8 @@ print(observation_list)
 
 ## Variable definition
 
+Change the following parameters to fit your needs (you will need to use the concept IDs from the `condition_list` and `observation_list`):
+
 Define the outcome variable (from the `condition_list`):
 
 ```{r define_variables_outcome}
