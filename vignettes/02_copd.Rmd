@@ -223,7 +223,7 @@ ds.summary("glm_table")
 
 Now, we can finally execute the final step - running the GLM on our prepared dataset:
 
-```{r glm, warning=FALSE}
+```{r glm, warning=FALSE, message=FALSE}
 # Define the formula for the GLM
 formula <- paste0(
   "glm_table$", outcome_variable, " ~ ", 
