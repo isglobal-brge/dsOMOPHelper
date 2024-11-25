@@ -35,6 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/01_demo.html">Demonstration</a></li>
     <li><a class="dropdown-item" href="../articles/02_copd.html">Chronic Obstructive Pulmonary Disease (COPD) Analysis using dsOMOP</a></li>
+    <li><a class="dropdown-item" href="../articles/03_copd_distributed.html">Chronic Obstructive Pulmonary Disease (COPD) Analysis using dsOMOP in a Distributed Environment</a></li>
     <li><a class="dropdown-item" href="../articles/03_template.html">Basic GLM with booleans template</a></li>
   </ul>
 </li>
@@ -194,39 +195,6 @@ retrieve the defined variables:</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="concept-name-matching">Concept name matching<a class="anchor" aria-label="anchor" href="#concept-name-matching"></a>
-</h3>
-<p>We need to identify the format of the concept names as they will be
-added to the dataset. This allows us to automate the process of
-identifying exact variable names based on the retrieved concept names
-from the database, which facilitates automation without having to
-manually change the variable names in the script.</p>
-<p>The function <code>custom_make_names</code> is used to format the
-concept names as they would be in the dataset:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">custom_make_names</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span>
-<span>  <span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span>
-<span>  <span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"\\."</span>, <span class="st">"_"</span>, <span class="va">name</span><span class="op">)</span></span>
-<span>  <span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"_+"</span>, <span class="st">"_"</span>, <span class="va">name</span><span class="op">)</span></span>
-<span>  <span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"^_|_$"</span>, <span class="st">""</span>, <span class="va">name</span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<p>Now we can retrieve the concept lists from the database and match
-them to the names as we expect them to be in the dataset:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Retrieve the concept catalogs for condition occurrence and observation</span></span>
-<span><span class="va">all_concepts_condition</span> <span class="op">&lt;-</span> <span class="va">o</span><span class="op">$</span><span class="fu">concepts</span><span class="op">(</span><span class="st">"condition_occurrence"</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span><span class="op">$</span><span class="va">server1</span></span>
-<span><span class="va">all_concepts_observation</span> <span class="op">&lt;-</span> <span class="va">o</span><span class="op">$</span><span class="fu">concepts</span><span class="op">(</span><span class="st">"observation"</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span><span class="op">$</span><span class="va">server1</span></span>
-<span></span>
-<span><span class="co"># Match the concept IDs to the concept catalogs</span></span>
-<span><span class="va">matched_concept_condition</span> <span class="op">&lt;-</span> <span class="va">all_concepts_condition</span><span class="op">[</span><span class="va">all_concepts_condition</span><span class="op">$</span><span class="va">concept_id</span> <span class="op">==</span> <span class="va">outcome_concept_id</span>, <span class="op">]</span></span>
-<span><span class="va">matched_concepts_conditions</span> <span class="op">&lt;-</span> <span class="va">all_concepts_condition</span><span class="op">[</span><span class="va">all_concepts_condition</span><span class="op">$</span><span class="va">concept_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">condition_list</span>, <span class="op">]</span></span>
-<span><span class="va">matched_concepts_observation</span> <span class="op">&lt;-</span> <span class="va">all_concepts_observation</span><span class="op">[</span><span class="va">all_concepts_observation</span><span class="op">$</span><span class="va">concept_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">observation_list</span>, <span class="op">]</span></span></code></pre></div>
-<p>These will be used to automatically match the variable names in the
-dataset in the next step.</p>
-</div>
-<div class="section level3">
 <h3 id="data-type-conversions">Data type conversions<a class="anchor" aria-label="anchor" href="#data-type-conversions"></a>
 </h3>
 <p>DataSHIELD will not transform an ID to a boolean if it is in a string
@@ -234,7 +202,7 @@ format, so this process involves two steps: 1. Transforming the ID to
 numeric 2. Transforming the numeric ID to boolean</p>
 <p>we have defined a function to do this automatically for every
 variable:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">convert_to_numeric_and_boolean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">variable_name</span>, <span class="va">id_type</span>, <span class="va">conns</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Construct the full variable name in the format "tufts$variable_name.id_type"</span></span>
 <span>  <span class="va">full_variable_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"tufts$"</span>, <span class="va">variable_name</span>, <span class="st">"."</span>, <span class="va">id_type</span><span class="op">)</span></span>
@@ -261,46 +229,58 @@ variable:</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Now we can apply this function to the selected variables:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert tobacco use observation to numeric and boolean</span></span>
+<span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"tobacco_user"</span>, <span class="st">"observation_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;tobacco_user&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;tobacco_user&gt; appears valid in all sources"</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the name of the outcome variable as it will be in the dataset</span></span>
-<span><span class="va">outcome_variable</span> <span class="op">&lt;-</span> <span class="fu">custom_make_names</span><span class="op">(</span><span class="va">matched_concept_condition</span><span class="op">$</span><span class="va">concept_name</span><span class="op">)</span></span>
-<span><span class="co"># Perform the type conversion of the outcome variable to numeric and then to boolean</span></span>
-<span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="va">outcome_variable</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Convert condition occurrences to numeric and boolean</span></span>
+<span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"rheumatoid_arthritis"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;rheumatoid_arthritis&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;rheumatoid_arthritis&gt; appears valid in all sources"</span></span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"asthma"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span> </span></code></pre></div>
+<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;asthma&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;asthma&gt; appears valid in all sources"</span></span></code></pre>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"vitamin_d_deficiency"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;vitamin_d_deficiency&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;vitamin_d_deficiency&gt; appears valid in all sources"</span></span></code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert outcome variable to numeric and boolean</span></span>
+<span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"chronic_obstructive_pulmonary_disease"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $is.object.created</span></span>
 <span><span class="co">## [1] "A data object &lt;chronic_obstructive_pulmonary_disease&gt; has been created in all specified data sources"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
 <span><span class="co">## [1] "&lt;chronic_obstructive_pulmonary_disease&gt; appears valid in all sources"</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Loop through every recognized condition occurrence concept</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">concept</span> <span class="kw">in</span> <span class="va">matched_concepts_conditions</span><span class="op">$</span><span class="va">concept_name</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Get the exact name of the condition occurrence as it will be in the dataset</span></span>
-<span>  <span class="va">variable_name</span> <span class="op">&lt;-</span> <span class="fu">custom_make_names</span><span class="op">(</span><span class="va">concept</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="co"># Perform the type conversion of the condition occurrence to numeric and then to boolean</span></span>
-<span>  <span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="va">variable_name</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Loop through every recognized observation concept</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">concept</span> <span class="kw">in</span> <span class="va">matched_concepts_observation</span><span class="op">$</span><span class="va">concept_name</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Get the exact name of the observation as it will be in the dataset</span></span>
-<span>  <span class="va">variable_name</span> <span class="op">&lt;-</span> <span class="fu">custom_make_names</span><span class="op">(</span><span class="va">concept</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="co"># Perform the type conversion of the observation to numeric and then to boolean</span></span>
-<span>  <span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="va">variable_name</span>, <span class="st">"observation_id"</span>, <span class="va">conns</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="create-table-for-the-glm">Create table for the GLM<a class="anchor" aria-label="anchor" href="#create-table-for-the-glm"></a>
 </h3>
 <p>We create a new table with the prepared outcome and predictors for
 the GLM:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get the exact name of the variables as they will be in the dataset</span></span>
 <span><span class="va">variable_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">matched_concepts_observation</span><span class="op">$</span><span class="va">concept_name</span>, <span class="va">custom_make_names</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">matched_concepts_conditions</span><span class="op">$</span><span class="va">concept_name</span>, <span class="va">custom_make_names</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  <span class="fu">custom_make_names</span><span class="op">(</span><span class="va">outcome_variable</span><span class="op">)</span></span>
+<span>  <span class="st">"chronic_obstructive_pulmonary_disease"</span>,</span>
+<span>  <span class="st">"tobacco_user"</span>,</span>
+<span>  <span class="st">"rheumatoid_arthritis"</span>,</span>
+<span>  <span class="st">"asthma"</span>,</span>
+<span>  <span class="st">"vitamin_d_deficiency"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create a new table with the prepared outcome and predictors</span></span>
@@ -315,7 +295,7 @@ the GLM:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
 <span><span class="co">## [1] "&lt;glm_table&gt; appears valid in all sources"</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We check the structure of the resulting table to ensure it has been created correctly</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"glm_table"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $server1</span></span>
@@ -329,11 +309,11 @@ the GLM:</p>
 <span><span class="co">## [1] 5</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $server1$`variables held`</span></span>
-<span><span class="co">## [1] "tobacco_user"                         </span></span>
-<span><span class="co">## [2] "rheumatoid_arthritis"                 </span></span>
-<span><span class="co">## [3] "asthma"                               </span></span>
-<span><span class="co">## [4] "vitamin_d_deficiency"                 </span></span>
-<span><span class="co">## [5] "chronic_obstructive_pulmonary_disease"</span></span></code></pre>
+<span><span class="co">## [1] "chronic_obstructive_pulmonary_disease"</span></span>
+<span><span class="co">## [2] "tobacco_user"                         </span></span>
+<span><span class="co">## [3] "rheumatoid_arthritis"                 </span></span>
+<span><span class="co">## [4] "asthma"                               </span></span>
+<span><span class="co">## [5] "vitamin_d_deficiency"</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -341,14 +321,16 @@ the GLM:</p>
 </h2>
 <p>Now, we can finally execute the final step - running the GLM on our
 prepared dataset:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define the formula for the GLM</span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>  <span class="st">"glm_table$"</span>, <span class="va">outcome_variable</span>, <span class="st">" ~ "</span>, </span>
+<span>  <span class="st">"chronic_obstructive_pulmonary_disease ~ "</span>, </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"glm_table$"</span>, <span class="fu">custom_make_names</span><span class="op">(</span><span class="va">matched_concepts_observation</span><span class="op">$</span><span class="va">concept_name</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"glm_table$"</span>, <span class="fu">custom_make_names</span><span class="op">(</span><span class="va">matched_concepts_conditions</span><span class="op">$</span><span class="va">concept_name</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="st">"tobacco_user"</span>,</span>
+<span>      <span class="st">"rheumatoid_arthritis"</span>,</span>
+<span>      <span class="st">"asthma"</span>,</span>
+<span>      <span class="st">"vitamin_d_deficiency"</span></span>
 <span>    <span class="op">)</span>,</span>
 <span>    collapse <span class="op">=</span> <span class="st">" + "</span></span>
 <span>  <span class="op">)</span></span>
@@ -390,33 +372,27 @@ prepared dataset:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $formula</span></span>
-<span><span class="co">## [1] "glm_table$chronic_obstructive_pulmonary_disease ~ glm_table$tobacco_user +      glm_table$rheumatoid_arthritis + glm_table$asthma + glm_table$vitamin_d_deficiency"</span></span>
+<span><span class="co">## [1] "chronic_obstructive_pulmonary_disease ~ tobacco_user + rheumatoid_arthritis +      asthma + vitamin_d_deficiency"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $coefficients</span></span>
-<span><span class="co">##                                 Estimate Std. Error     z-value</span></span>
-<span><span class="co">## (Intercept)                    -6.572083 0.03534378 -185.947355</span></span>
-<span><span class="co">## glm_table$tobacco_user          1.860760 0.24413811    7.621753</span></span>
-<span><span class="co">## glm_table$rheumatoid_arthritis  2.106862 0.39986610    5.268918</span></span>
-<span><span class="co">## glm_table$asthma                2.996876 0.11485691   26.092255</span></span>
-<span><span class="co">## glm_table$vitamin_d_deficiency  1.814804 0.30800707    5.892084</span></span>
-<span><span class="co">##                                      p-value low0.95CI.LP high0.95CI.LP</span></span>
-<span><span class="co">## (Intercept)                     0.000000e+00    -6.641355     -6.502810</span></span>
-<span><span class="co">## glm_table$tobacco_user          2.502536e-14     1.382258      2.339262</span></span>
-<span><span class="co">## glm_table$rheumatoid_arthritis  1.372299e-07     1.323139      2.890585</span></span>
-<span><span class="co">## glm_table$asthma               4.463685e-150     2.771760      3.221991</span></span>
-<span><span class="co">## glm_table$vitamin_d_deficiency  3.813549e-09     1.211121      2.418486</span></span>
-<span><span class="co">##                                        P_OR low0.95CI.P_OR</span></span>
-<span><span class="co">## (Intercept)                     0.001396927    0.001303556</span></span>
-<span><span class="co">## glm_table$tobacco_user          6.428622994    3.983888931</span></span>
-<span><span class="co">## glm_table$rheumatoid_arthritis  8.222397606    3.755189296</span></span>
-<span><span class="co">## glm_table$asthma               20.022883190   15.986751946</span></span>
-<span><span class="co">## glm_table$vitamin_d_deficiency  6.139869864    3.357245312</span></span>
-<span><span class="co">##                                high0.95CI.P_OR</span></span>
-<span><span class="co">## (Intercept)                        0.001496976</span></span>
-<span><span class="co">## glm_table$tobacco_user            10.373580768</span></span>
-<span><span class="co">## glm_table$rheumatoid_arthritis    18.003838708</span></span>
-<span><span class="co">## glm_table$asthma                  25.078005376</span></span>
-<span><span class="co">## glm_table$vitamin_d_deficiency    11.228849381</span></span>
+<span><span class="co">##                       Estimate Std. Error     z-value       p-value</span></span>
+<span><span class="co">## (Intercept)          -6.572083 0.03534378 -185.947355  0.000000e+00</span></span>
+<span><span class="co">## tobacco_user          1.860760 0.24413811    7.621753  2.502536e-14</span></span>
+<span><span class="co">## rheumatoid_arthritis  2.106862 0.39986610    5.268918  1.372299e-07</span></span>
+<span><span class="co">## asthma                2.996876 0.11485691   26.092255 4.463685e-150</span></span>
+<span><span class="co">## vitamin_d_deficiency  1.814804 0.30800707    5.892084  3.813549e-09</span></span>
+<span><span class="co">##                      low0.95CI.LP high0.95CI.LP         P_OR</span></span>
+<span><span class="co">## (Intercept)             -6.641355     -6.502810  0.001396927</span></span>
+<span><span class="co">## tobacco_user             1.382258      2.339262  6.428622994</span></span>
+<span><span class="co">## rheumatoid_arthritis     1.323139      2.890585  8.222397606</span></span>
+<span><span class="co">## asthma                   2.771760      3.221991 20.022883190</span></span>
+<span><span class="co">## vitamin_d_deficiency     1.211121      2.418486  6.139869864</span></span>
+<span><span class="co">##                      low0.95CI.P_OR high0.95CI.P_OR</span></span>
+<span><span class="co">## (Intercept)             0.001303556     0.001496976</span></span>
+<span><span class="co">## tobacco_user            3.983888931    10.373580768</span></span>
+<span><span class="co">## rheumatoid_arthritis    3.755189296    18.003838708</span></span>
+<span><span class="co">## asthma                 15.986751946    25.078005376</span></span>
+<span><span class="co">## vitamin_d_deficiency    3.357245312    11.228849381</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $dev</span></span>
 <span><span class="co">## [1] 13173.98</span></span>
