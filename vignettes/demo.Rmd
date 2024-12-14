@@ -7,6 +7,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r knitr_setup, include = FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
 This demonstration showcases the use of the `dsOMOPHelper` package, which provides a simplified approach for extracting data from OMOP CDM databases and integrating it with the DataSHIELD workflow through the `dsOMOPClient` package. `dsOMOPHelper` allows for the extraction and use of data from an OMOP CDM database as needed, based on the variables chosen by the user, formatting the data to make the information more accessible to researchers from the DataSHIELD environment. To assist in selecting data from the database, the package also includes methods for exploring the data that is available in the database.
 
 It is important to note that `dsOMOPHelper` aims to show the enhanced capabilities of tools built on top of `dsOMOPClient` by making its operations simpler and automating many of its processes. However, this ease of use might limit options for edge case situations that demand very specific operations, where using the basic methods of `dsOMOPClient` might be more appropriate due to its flexibility. For further technical information about the `dsOMOPClient` package, or if you're considering developing a tool based on it for a particular goal, please refer to [its GitHub repository](https://github.com/isglobal-brge/dsOMOPClient).
