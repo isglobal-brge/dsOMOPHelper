@@ -1,0 +1,192 @@
+---
+title: "General demonstration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This demonstration showcases the use of the `dsOMOPHelper` package, which provides a simplified approach for extracting data from OMOP CDM databases and integrating it with the DataSHIELD workflow through the `dsOMOPClient` package. `dsOMOPHelper` allows for the extraction and use of data from an OMOP CDM database as needed, based on the variables chosen by the user, formatting the data to make the information more accessible to researchers from the DataSHIELD environment. To assist in selecting data from the database, the package also includes methods for exploring the data that is available in the database.
+
+It is important to note that `dsOMOPHelper` aims to show the enhanced capabilities of tools built on top of `dsOMOPClient` by making its operations simpler and automating many of its processes. However, this ease of use might limit options for edge case situations that demand very specific operations, where using the basic methods of `dsOMOPClient` might be more appropriate due to its flexibility. For further technical information about the `dsOMOPClient` package, or if you're considering developing a tool based on it for a particular goal, please refer to [its GitHub repository](https://github.com/isglobal-brge/dsOMOPClient).
+
+# Prerequisites
+
+Before using `dsOMOPHelper`, it is recommended to have a basic understanding of:
+
+- The OMOP CDM structure and its standardized clinical data format. You can learn more about OMOP CDM in the [OHDSI Book chapter 'The Common Data Model'](https://ohdsi.github.io/TheBookOfOhdsi/CommonDataModel.html).
+
+- OMOP Vocabularies and how they standardize medical concepts (like diagnoses, medications, procedures) across different coding systems (ICD-9, ICD-10, SNOMED CT, etc.) into a common representation. The [OHDSI Book chapter 'Standardized Vocabularies'](https://ohdsi.github.io/TheBookOfOhdsi/StandardizedVocabularies.html) provides a comprehensive overview of this standardization process.
+
+- Basic DataSHIELD concepts and workflow. The [DataSHIELD Beginner's Tutorial](https://data2knowledge.atlassian.net/wiki/spaces/DSDEV/pages/931069953/Beginners+Tutorial+DataSHIELD+v6.1) is a good starting point.
+
+This knowledge will help you better understand how to effectively query and work with OMOP CDM data through the DataSHIELD infrastructure.
+
+# Establishing a connection
+
+In this example, we will be using the [MIMIC IV](https://physionet.org/content/mimic-iv-demo-omop/0.9/) data available on the [OBiBa's public Opal demo server](https://opal-demo.obiba.org). This server is publicly accessible, so all users are able to reproduce the examples of this guide by executing the same commands in their R session. The access credentials are:
+
+- Server URL: `https://opal-demo.obiba.org`
+- User: `dsuser`
+- Password: `P@ssw0rd`
+- Profile: `omop`
+
+First, we will establish a connection to the demo server using `DSI` with the provided credentials:
+
+```{r establishing_connection, message=FALSE}
+library(DSI)
+library(DSOpal)
+library(dsBaseClient)
+library(dsOMOPClient)
+library(dsOMOPHelper)
+
+builder <- newDSLoginBuilder()
+builder$append(
+  server = "opal_demo",
+  url = "https://opal-demo.obiba.org",
+  user = "dsuser",
+  password = "P@ssw0rd",
+  profile = "omop"
+)
+logindata <- builder$build()
+conns <- datashield.login(logins = logindata)
+```
+
+# Creating an interface helper object
+
+Once we have successfully established a connection with the server, we will create an interface helper object with `ds.omop.helper`. This function creates an interface object that allows users to interact with the OMOP CDM database based on a resource. We can use the methods available in this object to obtain data from the database by applying the desired filters and querying data catalogs for information present in the database. 
+
+Our server contains the database connection resource under the name `mimiciv` within the `omop_demo` project. Therefore, we need to specify that, from the connection we have established, we want to take the `omop_demo.mimiciv` resource. We also need to specify the symbol we want to use to refer to this object. In this case, we will use `mimiciv` as the symbol name:
+
+```{r creating_object, message=FALSE}
+o <- ds.omop.helper(connections = conns,
+                    resource = "omop_demo.mimiciv",
+                    symbol = "mimiciv")
+```
+
+When creating the helper object, the data from the `Person` table is automatically loaded into the specified symbol, in this case, `mimiciv`. We can check the contents of this symbol by using the `ds.summary` function from `dsBaseClient`:
+
+```{r person_summary}
+ds.summary("mimiciv")
+```
+
+Therefore, we will be using the `Person` table as the foundation since it serves as a central link to other clinical data tables in OMOP CDM databases. From here, we will build our study-specific table by adding the necessary data from other tables based on the variables required for our particular study.
+
+# Exploring the data
+
+Before we can construct our own study table, it's essential that we understand what data is available in the database. To achieve this, we can use the data exploration methods provided by `ds.omop.helper`, which allow us to identify the available tables in the database, as well as the concepts and columns that each table contains.
+
+## Tables
+
+The `tables` method returns a list of the available tables in the database:
+
+```{r tables_catalog}
+o$tables()
+```
+
+## Concepts
+
+The `concepts` method returns a data frame that functions as a dictionary for the available concepts within a specific table. Here, `concept_id` refers to the identifier of the present concepts, and `concept_name` is the textual name assigned to each concept. 
+
+For instance, if we want to explore the concepts available in the `Condition_occurrence` table:
+
+```{r concepts_catalog, R.options = list(max.print = 20)}
+o$concepts("condition_occurrence")
+```
+
+## Columns
+
+The `columns` method returns a list of the available column names in a specific table. This enables us to understand what information we can extract from each table, allowing us to select only the columns necessary for our study:
+
+```{r columns_catalog}
+o$columns("condition_occurrence")
+```
+
+# Retrieving tables
+
+Having explored the data available in the database, we are now ready to build our study-specific table. To do this, we'll employ the `auto` method provided by `dsOMOPHelper`. This method simplifies the task by automatically extracting and appending variables from various tables to our initial table (which currently only includes data from the `Person` table).
+
+The `auto` method uses the following arguments:
+
+- `tables`: A character vector of the names of the tables from which we want to extract data.
+- `concepts`: A numeric vector of the concept IDs of the concepts we want to extract.
+- `columns`: A character vector of the column names in the tables from which we want to extract data.
+
+All of these are optional, but it is highly recommended to utilize them to expedite the data extraction process and the construction of the study table.
+
+For instance, let's assume that, after the data exploration phase using the methods described above, we have decided to extract data on the condition `Cardiac arrhythmia`, which has a concept ID of `44784217` and is found in the `Condition_occurrence` table, and the observation `Body mass index 40+ - severely obese`, with a concept ID of `4256640` located in the `Observation` table. We want all columns related to both variables, so we will not specify any column filters.
+
+Our call to the `auto` method would be as follows:
+
+```{r auto_multiple_tables, warning=FALSE}
+o$auto(tables = c("condition_occurrence", "observation"),
+       concepts = c(44784217, 4256640))
+
+ds.summary("mimiciv")
+```
+
+As we can see, the table `mimiciv` now contains information from the `Condition_occurrence` and `Observation` tables, with all the columns related to our variables of interest.
+
+# Examples of usage
+
+In this section, we will explore some examples of how we can use the data extraction functions of `dsOMOPHelper` in conjunction with DataSHIELD's environment functions to manipulate and analyze the data. 
+
+Let's say that we want to add the observation `Marital status [NHANES]` to our study table. To do this, we first need to identify the corresponding concept, which in this case is `40766231` and is found in the `Observation` table of the database. In this instance, since we are only interested in its primary value and it is a categorical variable, we aim to retrieve data from the `value_as_concept_id` column.
+
+Our call to the `auto` function would be as follows:
+
+```{r auto_observation, warning=FALSE}
+o$auto(tables = c("observation"),
+       concepts = c(40766231),
+       columns = c("value_as_concept_id"))
+
+ds.summary("mimiciv$marital_status_nhanes.value_as_concept_id")
+```
+
+As we can see, we have successfully obtained a categorical variable containing the marital status information of the patients, specifically with the following categories: `divorced`, `married`, `never_married`, `widowed`. Now, we can use the `ds.table` function from `dsBaseClient` to obtain a frequency table of that same variable:
+
+```{r table_observation, warning=FALSE}
+ds.table("mimiciv$marital_status_nhanes.value_as_concept_id")
+```
+
+We now want to extract a numerical variable, for instance, `Body weight`, which is identified by the concept ID `3025315` and is located in the `Measurement` table. In this scenario, our goal is to retrieve data from the `value_as_number` column.
+
+Our call to the `auto` function would be as follows:
+
+```{r auto_measurement, warning=FALSE}
+o$auto(tables = c("measurement"),
+       concepts = c(3025315),
+       columns = c("value_as_number"))
+
+ds.summary("mimiciv$body_weight.value_as_number")
+```
+
+As we can see, we have successfully obtained a numerical variable that contains the body weight of the patients. To visually inspect the distribution of that same variable, we can generate a histogram using the `ds.histogram` function from `dsBaseClient`:
+
+```{r histogram_measurement, warning=FALSE}
+ds.histogram("mimiciv$body_weight.value_as_number")
+```
+
+Finally, we will perform a generalized linear regression (GLM) analysis to evaluate the relationship between blood glucose, hemoglobin A1c, and vitamin B12. To do this, we first need to extract the variables of interest from the corresponding tables, which are present in the `Measurement` table.
+
+For blood glucose, we use the concept ID `3000483`, which corresponds to `Glucose [Mass/volume] in Blood`. For hemoglobin A1c, the concept ID is `3004410`, representing `Hemoglobin A1c/Hemoglobin.total in Blood`. Lastly, for vitamin B12, we refer to the concept ID `3000593`, linked to `Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma`. Our objective is to extract the numerical values for these variables, hence we will focus on retrieving data specifically from the `value_as_number` column.
+
+Once the data is extracted, we can use the `ds.glm` function from `dsBaseClient` to perform the generalized linear regression analysis:
+
+```{r glm, warning=FALSE}
+o$auto(tables = c("measurement"),
+       concepts = c(3000483, 3004410, 3000593),
+       columns = c("value_as_number"))
+
+ds.glm(formula = "glucose_mass_volume_in_blood.value_as_number ~ 
+                  hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number + 
+                  cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number",
+       data = "mimiciv",
+       family = "gaussian",
+       datasources = conns)
+```
+
+As we can see, the data extracted from `dsOMOPHelper` can be perfectly integrated with DataSHIELD's environment functions to perform a wide range of operations, from simple descriptive statistics to more complex statistical modeling. 
+
+However, due to the reduced size of the sample data available in the public demo server, the results of the GLM analysis are not statistically significant. For a statistically significant analysis, we have included a [COPD analysis vignette](https://isglobal-brge.github.io/dsOMOPHelper/articles/copd.html) that reproduces some studies from the literature using a larger database that is not publicly available in the demo server.

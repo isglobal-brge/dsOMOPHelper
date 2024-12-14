@@ -9,3 +9,8 @@ authors:
     href: https://github.com/ESCRI11
   Juan R González:
     href: https://github.com/isglobal-brge
+
+articles:
+  - title: Articles
+    contents:
+      - demo
