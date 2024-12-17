@@ -7,6 +7,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = FALSE,
+  results = "hold"
+)
+```
+
 # Introduction
 
 In this analysis, we will explore the relationship between chronic obstructive pulmonary disease (COPD) and several key predictors using a synthetic dataset. Our goal is to demonstrate how `dsOMOP` can be used to analyze clinical data while validating known clinical associations.
@@ -27,7 +34,7 @@ The analysis was conducted using two distinct scenarios to validate the federate
 1. A centralized analysis using the complete Tufts Synthetic Dataset on a single Opal server.
 2. A distributed analysis where the dataset was split across three separate Opal servers, each containing a subset of patients, connected through DataSHIELD.
 
-![Centralized and federated architectures for the COPD analysis](../man/figures/copd_architectures.png)
+![**Figure 1:** Centralized and federated architectures for the COPD analysis](../man/figures/copd_architectures.png)
 
 # Centralized analysis
 
@@ -46,8 +53,8 @@ builder <- newDSLoginBuilder()
 
 builder$append(server="brge",
                url="https://opal.isglobal.org/brge",
-               user="administrator",
-               password="password",
+               user="dsuser",
+               password="P@ssw0rd",
                driver = "OpalDriver")
 
 logindata <- builder$build()
@@ -110,9 +117,9 @@ DataSHIELD will not transform an ID to a boolean if it is in a string format, so
 We define a function to perform these steps automatically for every variable:
 
 ```{r convert_to_numeric_and_boolean, message=FALSE, warning=FALSE}
-convert_to_numeric_and_boolean <- function(variable_name, id_type, conns) {
-  # Construct the full variable name in the format "tufts$variable_name.id_type"
-  full_variable_name <- paste0("tufts$", variable_name, ".", id_type)
+convert_to_boolean <- function(table, variable_name, id_type, conns) {
+  # Construct the full variable name in the format "table$variable_name.id_type"
+  full_variable_name <- paste0(table, "$", variable_name, ".", id_type)
 
   # Create a new variable name for the numeric conversion
   new_numeric_name <- paste0(variable_name, "_numeric")
@@ -133,24 +140,30 @@ convert_to_numeric_and_boolean <- function(variable_name, id_type, conns) {
     Boolean.operator = "!=", 
     numeric.output = TRUE, 
     na.assign = 0, 
-    newobj = variable_name
+    newobj = variable_name,
+    datasources = conns
   )
 }
 ```
 
-This allows us to apply these operations to the selected variables:
+This allows us to transform the selected variables to boolean format:
 
 ```{r automatic_type_conversion, message=FALSE, warning=FALSE}
-# Convert tobacco use observation to numeric and boolean
-convert_to_numeric_and_boolean("tobacco_user", "observation_id", conns)
+# Convert tobacco use observation to boolean
+convert_to_boolean("tufts", "tobacco_user", 
+                   "observation_id", conns)
 
-# Convert condition occurrences to numeric and boolean
-convert_to_numeric_and_boolean("asthma", "condition_occurrence_id", conns)
-convert_to_numeric_and_boolean("rheumatoid_arthritis", "condition_occurrence_id", conns)
-convert_to_numeric_and_boolean("vitamin_d_deficiency", "condition_occurrence_id", conns)
+# Convert condition occurrences to boolean
+convert_to_boolean("tufts", "asthma", 
+                   "condition_occurrence_id", conns)
+convert_to_boolean("tufts", "rheumatoid_arthritis", 
+                   "condition_occurrence_id", conns)
+convert_to_boolean("tufts", "vitamin_d_deficiency", 
+                   "condition_occurrence_id", conns)
 
-# Convert outcome variable to numeric and boolean
-convert_to_numeric_and_boolean("chronic_obstructive_pulmonary_disease", "condition_occurrence_id", conns)
+# Convert outcome variable (COPD) to boolean
+convert_to_boolean("tufts", "chronic_obstructive_pulmonary_disease", 
+                   "condition_occurrence_id", conns)
 ```
 
 ### Create table for the GLM
@@ -158,13 +171,13 @@ convert_to_numeric_and_boolean("chronic_obstructive_pulmonary_disease", "conditi
 We create a new table with the prepared outcome and predictors for the GLM:
 
 ```{r create_glm_table, message=FALSE, warning=FALSE}
-# Get the exact name of the variables as they will be in the dataset
+# We define the name of the variables as they will be in the dataset
 variable_names <- c(
-  "chronic_obstructive_pulmonary_disease",
   "tobacco_user",
   "asthma",
   "rheumatoid_arthritis",
-  "vitamin_d_deficiency"
+  "vitamin_d_deficiency",
+  "chronic_obstructive_pulmonary_disease"
 )
 
 # Create a new table with the prepared outcome and predictors
@@ -213,3 +226,140 @@ After finishing the centralized analysis, we close the connection:
 ```{r logout}
 datashield.logout(conns)
 ```
+
+# Distributed analysis
+
+## Server connection
+
+We start by establishing a connection with the three dedicated Opal servers. Each of these Opal servers contains a resource pointing to a database containing a different subset of the Tufts Synthetic Dataset. In combination, the three Opal servers contain 100% of the original dataset:
+
+```{r server_connection_dist, message=FALSE, warning=FALSE}
+builder_dist <- newDSLoginBuilder()
+
+builder_dist$append(server="brge1", 
+               url="https://opal.isglobal.org/brge1",
+               user="dsuser", 
+               password="P@ssw0rd", 
+               driver = "OpalDriver")
+
+builder_dist$append(server="brge2", 
+               url="https://opal.isglobal.org/brge2",
+               user="dsuser", 
+               password="P@ssw0rd", 
+               driver = "OpalDriver")
+
+builder_dist$append(server="brge3", 
+               url="https://opal.isglobal.org/brge3",
+               user="dsuser", 
+               password="P@ssw0rd", 
+               driver = "OpalDriver")
+
+logindata_dist <- builder_dist$build()
+conns_dist <- datashield.login(logins=logindata_dist)
+```
+
+We create an instance of `dsOMOPHelper` to interact with the three databases. Note that every Opal server will have a different resource name, so we need to specify the resource for each server:
+
+```{r dsOMOPHelper_instance_dist, message=FALSE, warning=FALSE}
+o <- ds.omop.helper(
+    connections = conns_dist,
+    resource = list("brge1" = "omop_demo.tufts_dist_1",
+                    "brge2" = "omop_demo.tufts_dist_2",
+                    "brge3" = "omop_demo.tufts_dist_3"),
+    symbol = "tufts_dist"
+)
+```
+
+We have specified the symbol `tufts_dist` for all servers, so from this point on, we can refer to `tufts_dist` in each server and every server will treat it as the same object, despite containing different parts of the dataset, performing the same operations on it. Therefore, the analysis will be conducted in the same way as in the centralized analysis, and DataSHIELD will handle the distributed nature of the dataset and combine the results.
+
+## Dataset construction
+
+### Data retrieval
+
+We already had defined the concepts that we want to retrieve under the `outcome_concept_id`, `condition_list`, and `observation_list` variables, so we can directly apply the `auto` function to the servers. Each server will retrieve the data for its corresponding part of the dataset:
+
+```{r data_retrieval_dist, message=FALSE, warning=FALSE}
+o$auto(
+    table = c("condition_occurrence", "observation"), 
+    concepts = c(outcome_concept_id, condition_list, observation_list),
+    columns = c("condition_occurrence_id", "observation_id") 
+)
+```
+
+We can observe how the three servers have obtained and stored the data in their corresponding `tufts_dist` objects:
+
+```{r check_data_retrieval_dist, message=FALSE, warning=FALSE}
+ds.summary("tufts_dist", conns_dist)
+```
+
+### Data type conversions
+
+The function that we defined previously, `convert_to_boolean`, should remain the same. We will apply it to transform the retrieved data into a boolean format for the analysis. Each server will apply the function to the data that is stored in its `tufts_dist` object:
+
+```{r automatic_type_conversion_dist, message=FALSE, warning=FALSE}
+# Convert tobacco use observation to boolean
+convert_to_boolean("tufts_dist", "tobacco_user", 
+                   "observation_id", conns_dist)
+
+# Convert condition occurrences to boolean
+convert_to_boolean("tufts_dist", "asthma", 
+                   "condition_occurrence_id", conns_dist)
+convert_to_boolean("tufts_dist", "rheumatoid_arthritis", 
+                   "condition_occurrence_id", conns_dist)
+convert_to_boolean("tufts_dist", "vitamin_d_deficiency", 
+                   "condition_occurrence_id", conns_dist)
+
+# Convert outcome variable (COPD) to boolean
+convert_to_boolean("tufts_dist", "chronic_obstructive_pulmonary_disease", 
+                   "condition_occurrence_id", conns_dist)
+```
+
+### Create table for the GLM
+
+We have successfully prepared the data for the analysis. Now, we can create a new table with the variables of interest for the GLM. These variables have already been defined in the `variable_names` list previously, so we can directly use it to create the table. This operation will construct a new table in each server:
+
+```{r create_glm_table_dist, message=FALSE, warning=FALSE}
+# Create new tables with the prepared outcome and predictors
+ds.cbind(
+  x = variable_names,
+  DataSHIELD.checks = FALSE,
+  newobj = "glm_table_dist",
+  datasources = conns_dist
+)
+
+# Check the structure of the resulting tables to ensure they have been created correctly
+ds.summary("glm_table_dist", conns_dist)
+```
+
+## Generalized Linear Model
+
+We can now execute the same GLM (with the same formula as in the centralized analysis, which was defined under the `formula` variable previously) on each server:
+
+```{r check_formula}
+formula
+```
+
+```{r glm_dist, warning=FALSE, message=FALSE}
+ds.glm(
+  formula = formula, 
+  data = "glm_table_dist", 
+  family = "binomial",
+  datasources = conns_dist
+)
+```
+
+As we can observe, the results are the same as in the centralized analysis, but the analysis has been conducted in a distributed manner.
+
+## Logout
+
+After finishing the distributed analysis, we close the connections to the servers:
+
+```{r logout_dist}
+datashield.logout(conns_dist)
+```
+
+# Conclusion
+
+In this study, we demonstrated the robustness and reliability of `dsOMOP` for conducting federated analyses across distributed datasets. The identical results obtained from both centralized and distributed approaches validate the effectiveness of our federated analysis framework. Our findings revealed statistically significant associations (p < 0.05) between COPD and all examined predictors, aligning with previously reported relationships in the literature. 
+
+These results showcase `dsOMOP`'s capability to integrate and analyze distributed medical data while maintaining statistical integrity. The implementation of this federated approach represents a significant advancement in distributed clinical data analysis, offering a solution for large-scale, multi-center studies where data sharing restrictions may apply. 

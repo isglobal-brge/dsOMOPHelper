@@ -112,8 +112,9 @@ separate Opal servers, each containing a subset of patients, connected
 through DataSHIELD.</li>
 </ol>
 <div class="float">
-<img src="../reference/figures/copd_architectures.png" alt="Centralized and federated architectures for the COPD analysis"><div class="figcaption">Centralized and federated architectures for the
-COPD analysis</div>
+<img src="../reference/figures/copd_architectures.png" alt="Figure 1: Centralized and federated architectures for the COPD analysis"><div class="figcaption">
+<strong>Figure 1:</strong> Centralized and
+federated architectures for the COPD analysis</div>
 </div>
 </div>
 <div class="section level2">
@@ -136,8 +137,8 @@ to a resource with the full version of the Tufts Synthetic Dataset:</p>
 <span></span>
 <span><span class="va">builder</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span>server<span class="op">=</span><span class="st">"brge"</span>,</span>
 <span>               url<span class="op">=</span><span class="st">"https://opal.isglobal.org/brge"</span>,</span>
-<span>               user<span class="op">=</span><span class="st">"administrator"</span>,</span>
-<span>               password<span class="op">=</span><span class="st">"password"</span>,</span>
+<span>               user<span class="op">=</span><span class="st">"dsuser"</span>,</span>
+<span>               password<span class="op">=</span><span class="st">"P@ssw0rd"</span>,</span>
 <span>               driver <span class="op">=</span> <span class="st">"OpalDriver"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">logindata</span> <span class="op">&lt;-</span> <span class="va">builder</span><span class="op">$</span><span class="fu">build</span><span class="op">(</span><span class="op">)</span></span>
@@ -202,9 +203,9 @@ format, so this process involves two steps:</p>
 <p>We define a function to perform these steps automatically for every
 variable:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">convert_to_numeric_and_boolean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">variable_name</span>, <span class="va">id_type</span>, <span class="va">conns</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Construct the full variable name in the format "tufts$variable_name.id_type"</span></span>
-<span>  <span class="va">full_variable_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"tufts$"</span>, <span class="va">variable_name</span>, <span class="st">"."</span>, <span class="va">id_type</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">convert_to_boolean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">table</span>, <span class="va">variable_name</span>, <span class="va">id_type</span>, <span class="va">conns</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Construct the full variable name in the format "table$variable_name.id_type"</span></span>
+<span>  <span class="va">full_variable_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">table</span>, <span class="st">"$"</span>, <span class="va">variable_name</span>, <span class="st">"."</span>, <span class="va">id_type</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Create a new variable name for the numeric conversion</span></span>
 <span>  <span class="va">new_numeric_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">variable_name</span>, <span class="st">"_numeric"</span><span class="op">)</span></span>
@@ -225,45 +226,53 @@ variable:</p>
 <span>    Boolean.operator <span class="op">=</span> <span class="st">"!="</span>, </span>
 <span>    numeric.output <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>    na.assign <span class="op">=</span> <span class="fl">0</span>, </span>
-<span>    newobj <span class="op">=</span> <span class="va">variable_name</span></span>
+<span>    newobj <span class="op">=</span> <span class="va">variable_name</span>,</span>
+<span>    datasources <span class="op">=</span> <span class="va">conns</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>This allows us to apply these operations to the selected
-variables:</p>
+<p>This allows us to transform the selected variables to boolean
+format:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Convert tobacco use observation to numeric and boolean</span></span>
-<span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"tobacco_user"</span>, <span class="st">"observation_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Convert tobacco use observation to boolean</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts"</span>, <span class="st">"tobacco_user"</span>, </span>
+<span>                   <span class="st">"observation_id"</span>, <span class="va">conns</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert condition occurrences to boolean</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts"</span>, <span class="st">"asthma"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts"</span>, <span class="st">"rheumatoid_arthritis"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts"</span>, <span class="st">"vitamin_d_deficiency"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert outcome variable (COPD) to boolean</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts"</span>, <span class="st">"chronic_obstructive_pulmonary_disease"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $is.object.created</span></span>
 <span><span class="co">## [1] "A data object &lt;tobacco_user&gt; has been created in all specified data sources"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
-<span><span class="co">## [1] "&lt;tobacco_user&gt; appears valid in all sources"</span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Convert condition occurrences to numeric and boolean</span></span>
-<span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"asthma"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "&lt;tobacco_user&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
 <span><span class="co">## [1] "A data object &lt;asthma&gt; has been created in all specified data sources"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
-<span><span class="co">## [1] "&lt;asthma&gt; appears valid in all sources"</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"rheumatoid_arthritis"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "&lt;asthma&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
 <span><span class="co">## [1] "A data object &lt;rheumatoid_arthritis&gt; has been created in all specified data sources"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
-<span><span class="co">## [1] "&lt;rheumatoid_arthritis&gt; appears valid in all sources"</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"vitamin_d_deficiency"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "&lt;rheumatoid_arthritis&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
 <span><span class="co">## [1] "A data object &lt;vitamin_d_deficiency&gt; has been created in all specified data sources"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
-<span><span class="co">## [1] "&lt;vitamin_d_deficiency&gt; appears valid in all sources"</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Convert outcome variable to numeric and boolean</span></span>
-<span><span class="fu">convert_to_numeric_and_boolean</span><span class="op">(</span><span class="st">"chronic_obstructive_pulmonary_disease"</span>, <span class="st">"condition_occurrence_id"</span>, <span class="va">conns</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "&lt;vitamin_d_deficiency&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
 <span><span class="co">## [1] "A data object &lt;chronic_obstructive_pulmonary_disease&gt; has been created in all specified data sources"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
@@ -274,14 +283,14 @@ variables:</p>
 </h4>
 <p>We create a new table with the prepared outcome and predictors for
 the GLM:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the exact name of the variables as they will be in the dataset</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># We define the name of the variables as they will be in the dataset</span></span>
 <span><span class="va">variable_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"chronic_obstructive_pulmonary_disease"</span>,</span>
 <span>  <span class="st">"tobacco_user"</span>,</span>
 <span>  <span class="st">"asthma"</span>,</span>
 <span>  <span class="st">"rheumatoid_arthritis"</span>,</span>
-<span>  <span class="st">"vitamin_d_deficiency"</span></span>
+<span>  <span class="st">"vitamin_d_deficiency"</span>,</span>
+<span>  <span class="st">"chronic_obstructive_pulmonary_disease"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create a new table with the prepared outcome and predictors</span></span>
@@ -290,16 +299,17 @@ the GLM:</p>
 <span>  DataSHIELD.checks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  newobj <span class="op">=</span> <span class="st">"glm_table"</span>,</span>
 <span>  datasources <span class="op">=</span> <span class="va">conns</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check the structure of the resulting table to ensure it has been created correctly</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"glm_table"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $is.object.created</span></span>
 <span><span class="co">## [1] "A data object &lt;glm_table&gt; has been created in all specified data sources"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $validity.check</span></span>
-<span><span class="co">## [1] "&lt;glm_table&gt; appears valid in all sources"</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Check the structure of the resulting table to ensure it has been created correctly</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"glm_table"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## $brge</span></span>
+<span><span class="co">## [1] "&lt;glm_table&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge</span></span>
 <span><span class="co">## $brge$class</span></span>
 <span><span class="co">## [1] "data.frame"</span></span>
 <span><span class="co">## </span></span>
@@ -310,11 +320,11 @@ the GLM:</p>
 <span><span class="co">## [1] 5</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $brge$`variables held`</span></span>
-<span><span class="co">## [1] "chronic_obstructive_pulmonary_disease"</span></span>
-<span><span class="co">## [2] "tobacco_user"                         </span></span>
-<span><span class="co">## [3] "asthma"                               </span></span>
-<span><span class="co">## [4] "rheumatoid_arthritis"                 </span></span>
-<span><span class="co">## [5] "vitamin_d_deficiency"</span></span></code></pre>
+<span><span class="co">## [1] "tobacco_user"                         </span></span>
+<span><span class="co">## [2] "asthma"                               </span></span>
+<span><span class="co">## [3] "rheumatoid_arthritis"                 </span></span>
+<span><span class="co">## [4] "vitamin_d_deficiency"                 </span></span>
+<span><span class="co">## [5] "chronic_obstructive_pulmonary_disease"</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -322,7 +332,7 @@ the GLM:</p>
 </h3>
 <p>We can now execute the final step - running the GLM on our prepared
 dataset:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define the formula for the GLM</span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>  <span class="st">"chronic_obstructive_pulmonary_disease ~ "</span>, </span>
@@ -409,9 +419,412 @@ dataset:</p>
 </h3>
 <p>After finishing the centralized analysis, we close the
 connection:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://datashield.github.io/DSI/reference/datashield.logout.html" class="external-link">datashield.logout</a></span><span class="op">(</span><span class="va">conns</span><span class="op">)</span></span></code></pre></div>
 </div>
+</div>
+<div class="section level2">
+<h2 id="distributed-analysis">Distributed analysis<a class="anchor" aria-label="anchor" href="#distributed-analysis"></a>
+</h2>
+<div class="section level3">
+<h3 id="server-connection-1">Server connection<a class="anchor" aria-label="anchor" href="#server-connection-1"></a>
+</h3>
+<p>We start by establishing a connection with the three dedicated Opal
+servers. Each of these Opal servers contains a resource pointing to a
+database containing a different subset of the Tufts Synthetic Dataset.
+In combination, the three Opal servers contain 100% of the original
+dataset:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">builder_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://datashield.github.io/DSI/reference/newDSLoginBuilder.html" class="external-link">newDSLoginBuilder</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">builder_dist</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span>server<span class="op">=</span><span class="st">"brge1"</span>, </span>
+<span>               url<span class="op">=</span><span class="st">"https://opal.isglobal.org/brge1"</span>,</span>
+<span>               user<span class="op">=</span><span class="st">"dsuser"</span>, </span>
+<span>               password<span class="op">=</span><span class="st">"P@ssw0rd"</span>, </span>
+<span>               driver <span class="op">=</span> <span class="st">"OpalDriver"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">builder_dist</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span>server<span class="op">=</span><span class="st">"brge2"</span>, </span>
+<span>               url<span class="op">=</span><span class="st">"https://opal.isglobal.org/brge2"</span>,</span>
+<span>               user<span class="op">=</span><span class="st">"dsuser"</span>, </span>
+<span>               password<span class="op">=</span><span class="st">"P@ssw0rd"</span>, </span>
+<span>               driver <span class="op">=</span> <span class="st">"OpalDriver"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">builder_dist</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span>server<span class="op">=</span><span class="st">"brge3"</span>, </span>
+<span>               url<span class="op">=</span><span class="st">"https://opal.isglobal.org/brge3"</span>,</span>
+<span>               user<span class="op">=</span><span class="st">"dsuser"</span>, </span>
+<span>               password<span class="op">=</span><span class="st">"P@ssw0rd"</span>, </span>
+<span>               driver <span class="op">=</span> <span class="st">"OpalDriver"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">logindata_dist</span> <span class="op">&lt;-</span> <span class="va">builder_dist</span><span class="op">$</span><span class="fu">build</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">conns_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://datashield.github.io/DSI/reference/datashield.login.html" class="external-link">datashield.login</a></span><span class="op">(</span>logins<span class="op">=</span><span class="va">logindata_dist</span><span class="op">)</span></span></code></pre></div>
+<p>We create an instance of <code>dsOMOPHelper</code> to interact with
+the three databases. Note that every Opal server will have a different
+resource name, so we need to specify the resource for each server:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">o</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ds.omop.helper.html">ds.omop.helper</a></span><span class="op">(</span></span>
+<span>    connections <span class="op">=</span> <span class="va">conns_dist</span>,</span>
+<span>    resource <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"brge1"</span> <span class="op">=</span> <span class="st">"omop_demo.tufts_dist_1"</span>,</span>
+<span>                    <span class="st">"brge2"</span> <span class="op">=</span> <span class="st">"omop_demo.tufts_dist_2"</span>,</span>
+<span>                    <span class="st">"brge3"</span> <span class="op">=</span> <span class="st">"omop_demo.tufts_dist_3"</span><span class="op">)</span>,</span>
+<span>    symbol <span class="op">=</span> <span class="st">"tufts_dist"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We have specified the symbol <code>tufts_dist</code> for all servers,
+so from this point on, we can refer to <code>tufts_dist</code> in each
+server and every server will treat it as the same object, despite
+containing different parts of the dataset, performing the same
+operations on it. Therefore, the analysis will be conducted in the same
+way as in the centralized analysis, and DataSHIELD will handle the
+distributed nature of the dataset and combine the results.</p>
+</div>
+<div class="section level3">
+<h3 id="dataset-construction-1">Dataset construction<a class="anchor" aria-label="anchor" href="#dataset-construction-1"></a>
+</h3>
+<div class="section level4">
+<h4 id="data-retrieval-1">Data retrieval<a class="anchor" aria-label="anchor" href="#data-retrieval-1"></a>
+</h4>
+<p>We already had defined the concepts that we want to retrieve under
+the <code>outcome_concept_id</code>, <code>condition_list</code>, and
+<code>observation_list</code> variables, so we can directly apply the
+<code>auto</code> function to the servers. Each server will retrieve the
+data for its corresponding part of the dataset:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">o</span><span class="op">$</span><span class="fu">auto</span><span class="op">(</span></span>
+<span>    table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition_occurrence"</span>, <span class="st">"observation"</span><span class="op">)</span>, </span>
+<span>    concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">outcome_concept_id</span>, <span class="va">condition_list</span>, <span class="va">observation_list</span><span class="op">)</span>,</span>
+<span>    columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition_occurrence_id"</span>, <span class="st">"observation_id"</span><span class="op">)</span> </span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We can observe how the three servers have obtained and stored the
+data in their corresponding <code>tufts_dist</code> objects:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"tufts_dist"</span>, <span class="va">conns_dist</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $brge1</span></span>
+<span><span class="co">## $brge1$class</span></span>
+<span><span class="co">## [1] "data.frame"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge1$`number of rows`</span></span>
+<span><span class="co">## [1] 192250</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge1$`number of columns`</span></span>
+<span><span class="co">## [1] 16</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge1$`variables held`</span></span>
+<span><span class="co">##  [1] "person_id"                                                    </span></span>
+<span><span class="co">##  [2] "gender_concept_id"                                            </span></span>
+<span><span class="co">##  [3] "year_of_birth"                                                </span></span>
+<span><span class="co">##  [4] "month_of_birth"                                               </span></span>
+<span><span class="co">##  [5] "day_of_birth"                                                 </span></span>
+<span><span class="co">##  [6] "birth_datetime"                                               </span></span>
+<span><span class="co">##  [7] "race_concept_id"                                              </span></span>
+<span><span class="co">##  [8] "ethnicity_concept_id"                                         </span></span>
+<span><span class="co">##  [9] "location_id"                                                  </span></span>
+<span><span class="co">## [10] "provider_id"                                                  </span></span>
+<span><span class="co">## [11] "care_site_id"                                                 </span></span>
+<span><span class="co">## [12] "vitamin_d_deficiency.condition_occurrence_id"                 </span></span>
+<span><span class="co">## [13] "asthma.condition_occurrence_id"                               </span></span>
+<span><span class="co">## [14] "chronic_obstructive_pulmonary_disease.condition_occurrence_id"</span></span>
+<span><span class="co">## [15] "rheumatoid_arthritis.condition_occurrence_id"                 </span></span>
+<span><span class="co">## [16] "tobacco_user.observation_id"                                  </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2</span></span>
+<span><span class="co">## $brge2$class</span></span>
+<span><span class="co">## [1] "data.frame"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2$`number of rows`</span></span>
+<span><span class="co">## [1] 192250</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2$`number of columns`</span></span>
+<span><span class="co">## [1] 16</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2$`variables held`</span></span>
+<span><span class="co">##  [1] "person_id"                                                    </span></span>
+<span><span class="co">##  [2] "gender_concept_id"                                            </span></span>
+<span><span class="co">##  [3] "year_of_birth"                                                </span></span>
+<span><span class="co">##  [4] "month_of_birth"                                               </span></span>
+<span><span class="co">##  [5] "day_of_birth"                                                 </span></span>
+<span><span class="co">##  [6] "birth_datetime"                                               </span></span>
+<span><span class="co">##  [7] "race_concept_id"                                              </span></span>
+<span><span class="co">##  [8] "ethnicity_concept_id"                                         </span></span>
+<span><span class="co">##  [9] "location_id"                                                  </span></span>
+<span><span class="co">## [10] "provider_id"                                                  </span></span>
+<span><span class="co">## [11] "care_site_id"                                                 </span></span>
+<span><span class="co">## [12] "asthma.condition_occurrence_id"                               </span></span>
+<span><span class="co">## [13] "vitamin_d_deficiency.condition_occurrence_id"                 </span></span>
+<span><span class="co">## [14] "rheumatoid_arthritis.condition_occurrence_id"                 </span></span>
+<span><span class="co">## [15] "chronic_obstructive_pulmonary_disease.condition_occurrence_id"</span></span>
+<span><span class="co">## [16] "tobacco_user.observation_id"                                  </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3</span></span>
+<span><span class="co">## $brge3$class</span></span>
+<span><span class="co">## [1] "data.frame"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3$`number of rows`</span></span>
+<span><span class="co">## [1] 192250</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3$`number of columns`</span></span>
+<span><span class="co">## [1] 16</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3$`variables held`</span></span>
+<span><span class="co">##  [1] "person_id"                                                    </span></span>
+<span><span class="co">##  [2] "gender_concept_id"                                            </span></span>
+<span><span class="co">##  [3] "year_of_birth"                                                </span></span>
+<span><span class="co">##  [4] "month_of_birth"                                               </span></span>
+<span><span class="co">##  [5] "day_of_birth"                                                 </span></span>
+<span><span class="co">##  [6] "birth_datetime"                                               </span></span>
+<span><span class="co">##  [7] "race_concept_id"                                              </span></span>
+<span><span class="co">##  [8] "ethnicity_concept_id"                                         </span></span>
+<span><span class="co">##  [9] "location_id"                                                  </span></span>
+<span><span class="co">## [10] "provider_id"                                                  </span></span>
+<span><span class="co">## [11] "care_site_id"                                                 </span></span>
+<span><span class="co">## [12] "asthma.condition_occurrence_id"                               </span></span>
+<span><span class="co">## [13] "vitamin_d_deficiency.condition_occurrence_id"                 </span></span>
+<span><span class="co">## [14] "chronic_obstructive_pulmonary_disease.condition_occurrence_id"</span></span>
+<span><span class="co">## [15] "rheumatoid_arthritis.condition_occurrence_id"                 </span></span>
+<span><span class="co">## [16] "tobacco_user.observation_id"</span></span></code></pre>
+</div>
+<div class="section level4">
+<h4 id="data-type-conversions-1">Data type conversions<a class="anchor" aria-label="anchor" href="#data-type-conversions-1"></a>
+</h4>
+<p>The function that we defined previously,
+<code>convert_to_boolean</code>, should remain the same. We will apply
+it to transform the retrieved data into a boolean format for the
+analysis. Each server will apply the function to the data that is stored
+in its <code>tufts_dist</code> object:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert tobacco use observation to boolean</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts_dist"</span>, <span class="st">"tobacco_user"</span>, </span>
+<span>                   <span class="st">"observation_id"</span>, <span class="va">conns_dist</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert condition occurrences to boolean</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts_dist"</span>, <span class="st">"asthma"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns_dist</span><span class="op">)</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts_dist"</span>, <span class="st">"rheumatoid_arthritis"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns_dist</span><span class="op">)</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts_dist"</span>, <span class="st">"vitamin_d_deficiency"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns_dist</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert outcome variable (COPD) to boolean</span></span>
+<span><span class="fu">convert_to_boolean</span><span class="op">(</span><span class="st">"tufts_dist"</span>, <span class="st">"chronic_obstructive_pulmonary_disease"</span>, </span>
+<span>                   <span class="st">"condition_occurrence_id"</span>, <span class="va">conns_dist</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;tobacco_user&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;tobacco_user&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;asthma&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;asthma&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;rheumatoid_arthritis&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;rheumatoid_arthritis&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;vitamin_d_deficiency&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;vitamin_d_deficiency&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;chronic_obstructive_pulmonary_disease&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;chronic_obstructive_pulmonary_disease&gt; appears valid in all sources"</span></span></code></pre>
+</div>
+<div class="section level4">
+<h4 id="create-table-for-the-glm-1">Create table for the GLM<a class="anchor" aria-label="anchor" href="#create-table-for-the-glm-1"></a>
+</h4>
+<p>We have successfully prepared the data for the analysis. Now, we can
+create a new table with the variables of interest for the GLM. These
+variables have already been defined in the <code>variable_names</code>
+list previously, so we can directly use it to create the table. This
+operation will construct a new table in each server:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create new tables with the prepared outcome and predictors</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.cbind.html" class="external-link">ds.cbind</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="va">variable_names</span>,</span>
+<span>  DataSHIELD.checks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  newobj <span class="op">=</span> <span class="st">"glm_table_dist"</span>,</span>
+<span>  datasources <span class="op">=</span> <span class="va">conns_dist</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check the structure of the resulting tables to ensure they have been created correctly</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.summary.html" class="external-link">ds.summary</a></span><span class="op">(</span><span class="st">"glm_table_dist"</span>, <span class="va">conns_dist</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $is.object.created</span></span>
+<span><span class="co">## [1] "A data object &lt;glm_table_dist&gt; has been created in all specified data sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $validity.check</span></span>
+<span><span class="co">## [1] "&lt;glm_table_dist&gt; appears valid in all sources"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge1</span></span>
+<span><span class="co">## $brge1$class</span></span>
+<span><span class="co">## [1] "data.frame"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge1$`number of rows`</span></span>
+<span><span class="co">## [1] 192250</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge1$`number of columns`</span></span>
+<span><span class="co">## [1] 5</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge1$`variables held`</span></span>
+<span><span class="co">## [1] "tobacco_user"                         </span></span>
+<span><span class="co">## [2] "asthma"                               </span></span>
+<span><span class="co">## [3] "rheumatoid_arthritis"                 </span></span>
+<span><span class="co">## [4] "vitamin_d_deficiency"                 </span></span>
+<span><span class="co">## [5] "chronic_obstructive_pulmonary_disease"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2</span></span>
+<span><span class="co">## $brge2$class</span></span>
+<span><span class="co">## [1] "data.frame"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2$`number of rows`</span></span>
+<span><span class="co">## [1] 192250</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2$`number of columns`</span></span>
+<span><span class="co">## [1] 5</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge2$`variables held`</span></span>
+<span><span class="co">## [1] "tobacco_user"                         </span></span>
+<span><span class="co">## [2] "asthma"                               </span></span>
+<span><span class="co">## [3] "rheumatoid_arthritis"                 </span></span>
+<span><span class="co">## [4] "vitamin_d_deficiency"                 </span></span>
+<span><span class="co">## [5] "chronic_obstructive_pulmonary_disease"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3</span></span>
+<span><span class="co">## $brge3$class</span></span>
+<span><span class="co">## [1] "data.frame"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3$`number of rows`</span></span>
+<span><span class="co">## [1] 192250</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3$`number of columns`</span></span>
+<span><span class="co">## [1] 5</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $brge3$`variables held`</span></span>
+<span><span class="co">## [1] "tobacco_user"                         </span></span>
+<span><span class="co">## [2] "asthma"                               </span></span>
+<span><span class="co">## [3] "rheumatoid_arthritis"                 </span></span>
+<span><span class="co">## [4] "vitamin_d_deficiency"                 </span></span>
+<span><span class="co">## [5] "chronic_obstructive_pulmonary_disease"</span></span></code></pre>
+</div>
+</div>
+<div class="section level3">
+<h3 id="generalized-linear-model-1">Generalized Linear Model<a class="anchor" aria-label="anchor" href="#generalized-linear-model-1"></a>
+</h3>
+<p>We can now execute the same GLM (with the same formula as in the
+centralized analysis, which was defined under the <code>formula</code>
+variable previously) on each server:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">formula</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "chronic_obstructive_pulmonary_disease ~ tobacco_user + asthma + rheumatoid_arthritis + vitamin_d_deficiency"</span></span></code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.glm.html" class="external-link">ds.glm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">formula</span>, </span>
+<span>  data <span class="op">=</span> <span class="st">"glm_table_dist"</span>, </span>
+<span>  family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
+<span>  datasources <span class="op">=</span> <span class="va">conns_dist</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $Nvalid</span></span>
+<span><span class="co">## [1] 576750</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $Nmissing</span></span>
+<span><span class="co">## [1] 0</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $Ntotal</span></span>
+<span><span class="co">## [1] 576750</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $disclosure.risk</span></span>
+<span><span class="co">##       RISK OF DISCLOSURE</span></span>
+<span><span class="co">## brge1                  0</span></span>
+<span><span class="co">## brge2                  0</span></span>
+<span><span class="co">## brge3                  0</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $errorMessage</span></span>
+<span><span class="co">##       ERROR MESSAGES</span></span>
+<span><span class="co">## brge1 "No errors"   </span></span>
+<span><span class="co">## brge2 "No errors"   </span></span>
+<span><span class="co">## brge3 "No errors"   </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $nsubs</span></span>
+<span><span class="co">## [1] 576750</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $iter</span></span>
+<span><span class="co">## [1] 10</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $family</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Family: binomial </span></span>
+<span><span class="co">## Link function: logit </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $formula</span></span>
+<span><span class="co">## [1] "chronic_obstructive_pulmonary_disease ~ tobacco_user + asthma +      rheumatoid_arthritis + vitamin_d_deficiency"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $coefficients</span></span>
+<span><span class="co">##                       Estimate Std. Error     z-value       p-value</span></span>
+<span><span class="co">## (Intercept)          -6.572083 0.03534378 -185.947355  0.000000e+00</span></span>
+<span><span class="co">## tobacco_user          1.860760 0.24413811    7.621753  2.502536e-14</span></span>
+<span><span class="co">## asthma                2.996876 0.11485691   26.092255 4.463685e-150</span></span>
+<span><span class="co">## rheumatoid_arthritis  2.106862 0.39986610    5.268918  1.372299e-07</span></span>
+<span><span class="co">## vitamin_d_deficiency  1.814804 0.30800707    5.892084  3.813549e-09</span></span>
+<span><span class="co">##                      low0.95CI.LP high0.95CI.LP         P_OR</span></span>
+<span><span class="co">## (Intercept)             -6.641355     -6.502810  0.001396927</span></span>
+<span><span class="co">## tobacco_user             1.382258      2.339262  6.428622994</span></span>
+<span><span class="co">## asthma                   2.771760      3.221991 20.022883190</span></span>
+<span><span class="co">## rheumatoid_arthritis     1.323139      2.890585  8.222397606</span></span>
+<span><span class="co">## vitamin_d_deficiency     1.211121      2.418486  6.139869864</span></span>
+<span><span class="co">##                      low0.95CI.P_OR high0.95CI.P_OR</span></span>
+<span><span class="co">## (Intercept)             0.001303556     0.001496976</span></span>
+<span><span class="co">## tobacco_user            3.983888931    10.373580768</span></span>
+<span><span class="co">## asthma                 15.986751946    25.078005376</span></span>
+<span><span class="co">## rheumatoid_arthritis    3.755189296    18.003838708</span></span>
+<span><span class="co">## vitamin_d_deficiency    3.357245312    11.228849381</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $dev</span></span>
+<span><span class="co">## [1] 13173.98</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $df</span></span>
+<span><span class="co">## [1] 576745</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $output.information</span></span>
+<span><span class="co">## [1] "SEE TOP OF OUTPUT FOR INFORMATION ON MISSING DATA AND ERROR MESSAGES"</span></span></code></pre>
+<p>As we can observe, the results are the same as in the centralized
+analysis, but the analysis has been conducted in a distributed
+manner.</p>
+</div>
+<div class="section level3">
+<h3 id="logout-1">Logout<a class="anchor" aria-label="anchor" href="#logout-1"></a>
+</h3>
+<p>After finishing the distributed analysis, we close the connections to
+the servers:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://datashield.github.io/DSI/reference/datashield.logout.html" class="external-link">datashield.logout</a></span><span class="op">(</span><span class="va">conns_dist</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h2>
+<p>In this study, we demonstrated the robustness and reliability of
+<code>dsOMOP</code> for conducting federated analyses across distributed
+datasets. The identical results obtained from both centralized and
+distributed approaches validate the effectiveness of our federated
+analysis framework. Our findings revealed statistically significant
+associations (p &lt; 0.05) between COPD and all examined predictors,
+aligning with previously reported relationships in the literature.</p>
+<p>These results showcase <code>dsOMOP</code>’s capability to integrate
+and analyze distributed medical data while maintaining statistical
+integrity. The implementation of this federated approach represents a
+significant advancement in distributed clinical data analysis, offering
+a solution for large-scale, multi-center studies where data sharing
+restrictions may apply.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
