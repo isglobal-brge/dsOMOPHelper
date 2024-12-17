@@ -16,25 +16,25 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-In this analysis, we will explore the relationship between chronic obstructive pulmonary disease (COPD) and several key predictors using a synthetic dataset. Our goal is to demonstrate how `dsOMOP` can be used to analyze clinical data while validating known clinical associations.
+In this analysis, we explore the relationship between chronic obstructive pulmonary disease (COPD) and several key predictors using a synthetic dataset. Our goal is to demonstrate how `dsOMOP` can be used to analyze clinical data while validating known clinical associations.
 
-We utilized the **Tufts Synthetic Dataset**, which consists of fully synthetic electronic health record (EHR) data representing 567,000 synthetic patients. This dataset was generated in 2021 through a collaboration between **Syntegra, Inc.** and **Tufts Medical Center** using a deep learning transformer model. The model was trained on real-world EHR data from the **Tufts Research Data Warehouse (TRDW)**, which had already been transformed into OMOP CDM format. It includes longitudinal clinical data from patients who received care across Tufts Medicine's three hospitals, 40-practice physician network, and home health care organization.
+We utilize the **Tufts Synthetic Dataset**, which consists of fully synthetic electronic health record (EHR) data representing 567,000 synthetic patients. This dataset was generated in 2021 through a collaboration between **Syntegra, Inc.** and **Tufts Medical Center** using a deep learning transformer model. The model was trained on real-world EHR data from the **Tufts Research Data Warehouse (TRDW)**, which had already been transformed into OMOP CDM format. It includes longitudinal clinical data from patients who received care across Tufts Medicine's three hospitals, 40-practice physician network, and home health care organization.
 
 The Tufts Synthetic Dataset contains clinical information such as patient visits, conditions, medications, laboratory measurements, procedures, observations, and device exposures, all structured according to the OMOP CDM version 5.3. The large volume of patient data, along with the realistic nature of the synthetic dataset, makes it ideal for testing the functionality of dsOMOP by exploring significant associations and patterns within the data.
 
-Based on their relevance in the literature and their availability in our dataset, we focused on the following well-established predictors of COPD:
+Based on their relevance in the literature and their availability in our dataset, we focus on the following well-established predictors of COPD:
 
 - Tobacco use
 - Vitamin D deficiency  
 - History of asthma
 - History of rheumatoid arthritis
 
-The analysis was conducted using two distinct scenarios to validate the federated approach:
+The analysis is conducted using two distinct scenarios to validate the federated approach:
 
 1. A centralized analysis using the complete Tufts Synthetic Dataset on a single Opal server.
 2. A distributed analysis where the dataset was split across three separate Opal servers, each containing a subset of patients, connected through DataSHIELD.
 
-![**Figure 1:** Centralized and federated architectures for the COPD analysis](../man/figures/copd_architectures.png)
+![**Figure 1:** Centralized (1) and distributed (2) architectures for the COPD analysis](../man/figures/copd_architectures.png)
 
 # Centralized analysis
 

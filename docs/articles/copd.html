@@ -69,12 +69,12 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>In this analysis, we will explore the relationship between chronic
+<p>In this analysis, we explore the relationship between chronic
 obstructive pulmonary disease (COPD) and several key predictors using a
 synthetic dataset. Our goal is to demonstrate how <code>dsOMOP</code>
 can be used to analyze clinical data while validating known clinical
 associations.</p>
-<p>We utilized the <strong>Tufts Synthetic Dataset</strong>, which
+<p>We utilize the <strong>Tufts Synthetic Dataset</strong>, which
 consists of fully synthetic electronic health record (EHR) data
 representing 567,000 synthetic patients. This dataset was generated in
 2021 through a collaboration between <strong>Syntegra, Inc.</strong> and
@@ -93,7 +93,7 @@ with the realistic nature of the synthetic dataset, makes it ideal for
 testing the functionality of dsOMOP by exploring significant
 associations and patterns within the data.</p>
 <p>Based on their relevance in the literature and their availability in
-our dataset, we focused on the following well-established predictors of
+our dataset, we focus on the following well-established predictors of
 COPD:</p>
 <ul>
 <li>Tobacco use</li>
@@ -102,19 +102,19 @@ COPD:</p>
 <li>History of asthma</li>
 <li>History of rheumatoid arthritis</li>
 </ul>
-<p>The analysis was conducted using two distinct scenarios to validate
+<p>The analysis is conducted using two distinct scenarios to validate
 the federated approach:</p>
 <ol style="list-style-type: decimal">
 <li>A centralized analysis using the complete Tufts Synthetic Dataset on
 a single Opal server.</li>
-<li>A distributed analysis where the dataset was split across three
+<li>A distributed analysis where the dataset is split across three
 separate Opal servers, each containing a subset of patients, connected
 through DataSHIELD.</li>
 </ol>
 <div class="float">
 <img src="../reference/figures/copd_architectures.png" alt="Figure 1: Centralized and federated architectures for the COPD analysis"><div class="figcaption">
-<strong>Figure 1:</strong> Centralized and
-federated architectures for the COPD analysis</div>
+<strong>Figure 1:</strong> Centralized (1) and
+distributed (2) architectures for the COPD analysis</div>
 </div>
 </div>
 <div class="section level2">
