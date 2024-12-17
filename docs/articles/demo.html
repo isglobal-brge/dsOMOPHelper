@@ -35,7 +35,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/demo.html">General demonstration</a></li>
+<li><a class="dropdown-item" href="../articles/copd.html">COPD analysis example</a></li>
+    <li><a class="dropdown-item" href="../articles/demo.html">General demonstration</a></li>
   </ul>
 </li>
       </ul>
@@ -469,19 +470,19 @@ the <code>ds.histogram</code> function from
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/dsBaseClient/man/ds.histogram.html" class="external-link">ds.histogram</a></span><span class="op">(</span><span class="st">"mimiciv$body_weight.value_as_number"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="demo_files/figure-html/histogram_measurement-1.png" width="700"></p>
 <pre><code><span><span class="co">## $breaks</span></span>
-<span><span class="co">##  [1]  37.91096  54.73780  71.56463  88.39147 105.21830 122.04514 138.87198</span></span>
-<span><span class="co">##  [8] 155.69881 172.52565 189.35248 206.17932</span></span>
+<span><span class="co">##  [1]  38.37067  54.89376  71.41685  87.93995 104.46304 120.98613 137.50922</span></span>
+<span><span class="co">##  [8] 154.03231 170.55540 187.07849 203.60158</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $counts</span></span>
-<span><span class="co">##  [1]  8 24 29 20  7  3  0  3  0  0</span></span>
+<span><span class="co">##  [1]  8 24 29 20  6  4  0  0  0  0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $density</span></span>
-<span><span class="co">##  [1] 0.004851337 0.014554011 0.017586097 0.012128343 0.004244920</span></span>
-<span><span class="co">##  [6] 0.001819251 0.000000000 0.001819251 0.000000000 0.000000000</span></span>
+<span><span class="co">##  [1] 0.004940519 0.014821558 0.017909383 0.012351299 0.003705390</span></span>
+<span><span class="co">##  [6] 0.002470260 0.000000000 0.000000000 0.000000000 0.000000000</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $mids</span></span>
-<span><span class="co">##  [1]  46.32438  63.15121  79.97805  96.80489 113.63172 130.45856 147.28539</span></span>
-<span><span class="co">##  [8] 164.11223 180.93906 197.76590</span></span>
+<span><span class="co">##  [1]  46.63222  63.15531  79.67840  96.20149 112.72458 129.24767 145.77076</span></span>
+<span><span class="co">##  [8] 162.29386 178.81695 195.34004</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $xname</span></span>
 <span><span class="co">## [1] "xvect"</span></span>
@@ -553,32 +554,32 @@ linear regression analysis:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## $coefficients</span></span>
 <span><span class="co">##                                                                          Estimate</span></span>
-<span><span class="co">## (Intercept)                                                          120.95889328</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number               0.82795236</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  -0.01610667</span></span>
+<span><span class="co">## (Intercept)                                                          112.32082034</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number               2.02330303</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  -0.01508464</span></span>
 <span><span class="co">##                                                                       Std. Error</span></span>
-<span><span class="co">## (Intercept)                                                          89.11697092</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             11.55494959</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  0.04187167</span></span>
-<span><span class="co">##                                                                          z-value</span></span>
-<span><span class="co">## (Intercept)                                                           1.35730481</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number              0.07165348</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number -0.38466759</span></span>
+<span><span class="co">## (Intercept)                                                          87.86777856</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             11.23987059</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  0.04190505</span></span>
+<span><span class="co">##                                                                         z-value</span></span>
+<span><span class="co">## (Intercept)                                                           1.2782936</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number              0.1800112</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number -0.3599719</span></span>
 <span><span class="co">##                                                                        p-value</span></span>
-<span><span class="co">## (Intercept)                                                          0.1746844</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             0.9428777</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number 0.7004837</span></span>
+<span><span class="co">## (Intercept)                                                          0.2011459</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             0.8571437</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number 0.7188681</span></span>
 <span><span class="co">##                                                                         low0.95CI</span></span>
-<span><span class="co">## (Intercept)                                                          -53.70716014</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             -21.81933267</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  -0.09817364</span></span>
+<span><span class="co">## (Intercept)                                                          -59.89686103</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number             -20.00643853</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number  -0.09721702</span></span>
 <span><span class="co">##                                                                        high0.95CI</span></span>
-<span><span class="co">## (Intercept)                                                          295.62494670</span></span>
-<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number              23.47523740</span></span>
-<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number   0.06596029</span></span>
+<span><span class="co">## (Intercept)                                                          284.53850171</span></span>
+<span><span class="co">## hemoglobin_a1c_hemoglobin_total_in_blood.value_as_number              24.05304458</span></span>
+<span><span class="co">## cobalamin_vitamin_b12_mass_volume_in_serum_or_plasma.value_as_number   0.06704774</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $dev</span></span>
-<span><span class="co">## [1] 21068.15</span></span>
+<span><span class="co">## [1] 20986.45</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $df</span></span>
 <span><span class="co">## [1] 7</span></span>
@@ -596,6 +597,14 @@ have included a <a href="https://isglobal-brge.github.io/dsOMOPHelper/articles/c
 analysis vignette</a> that reproduces some studies from the literature
 using a larger database that is not publicly available in the demo
 server.</p>
+</div>
+<div class="section level2">
+<h2 id="logout">Logout<a class="anchor" aria-label="anchor" href="#logout"></a>
+</h2>
+<p>After finishing the analysis, it is important to logout from the
+DataSHIELD server to free up resources:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://datashield.github.io/DSI/reference/datashield.logout.html" class="external-link">datashield.logout</a></span><span class="op">(</span><span class="va">conns</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

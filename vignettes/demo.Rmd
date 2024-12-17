@@ -194,3 +194,11 @@ ds.glm(formula = "glucose_mass_volume_in_blood.value_as_number ~
 As we can see, the data extracted from `dsOMOPHelper` can be perfectly integrated with DataSHIELD's environment functions to perform a wide range of operations, from simple descriptive statistics to more complex statistical modeling. 
 
 However, due to the reduced size of the sample data available in the public demo server, the results of the GLM analysis are not statistically significant. For a statistically significant analysis, we have included a [COPD analysis vignette](https://isglobal-brge.github.io/dsOMOPHelper/articles/copd.html) that reproduces some studies from the literature using a larger database that is not publicly available in the demo server.
+
+# Logout
+
+After finishing the analysis, it is important to logout from the DataSHIELD server to free up resources:
+
+```{r logout}
+datashield.logout(conns)
+```
