@@ -4,19 +4,58 @@
 \alias{OMOPCDMHelper-auto}
 \title{Auto-append function for OMOP CDM Helper}
 \arguments{
-\item{tables}{Optional; a vector of table names to include in the operation.
-If NULL, all person-related tables are considered except 'person' and 'concept'.}
+\item{tables}{Optional; character vector of table names to include in the operation.
+If NULL, all person-related tables are considered except 'person' and 'concept'.
+Tables are case-insensitive.}
 
-\item{columns}{Optional; a vector of column names to include in the operation.}
+\item{columns}{Optional; character vector of column names to include in the operation.
+These columns will be retrieved from each specified table.}
 
-\item{concepts}{Optional; a list of concept IDs to filter the data by.}
+\item{concepts}{Optional; list of concept IDs to filter the data by.
+Used to restrict data to specific medical concepts.}
 
-\item{silent}{Optional; a boolean indicating whether to suppress warnings.}
+\item{silent}{Optional; logical indicating whether to suppress warnings (default: FALSE).
+Set to TRUE to disable performance-related warnings.}
 
-\item{...}{Additional arguments to pass to the append method.}
+\item{...}{Additional arguments passed to the append method.}
+}
+\value{
+No return value. Function operates through side effects, appending data to the base table.
 }
 \description{
 This function automatically appends data from specified or all tables in the OMOP CDM database
-to a base table, with options to filter by columns and concepts. It excludes 'person' and 'concept'
-tables by default and warns if no filters are provided, potentially impacting performance.
+to a base table. It provides flexible filtering options through columns and concepts while implementing
+safeguards against performance issues. The function intelligently handles table selection, excluding
+'person' and 'concept' tables by default to prevent data duplication.
+}
+\details{
+The function performs the following key operations:
+\enumerate{
+\item Validates and processes input tables, defaulting to all available tables if none specified
+\item Provides warning messages for potentially resource-intensive operations
+\item Excludes 'person' and 'concept' tables to prevent data duplication
+\item Attempts to append data from each valid table with error handling
+\item Automatically generates prefixed column names for clarity
+}
+}
+\examples{
+\dontrun{
+# Initialize helper
+helper <- OMOPCDMHelper$new(connection)
+
+# Append specific tables with column filtering
+helper$auto(
+  tables = c("drug_exposure", "condition_occurrence"),
+  columns = c("start_date", "end_date"),
+  concepts = c(1234, 5678)
+)
+
+# Append all available tables (with warning)
+helper$auto()
+}
+
+}
+\seealso{
+\code{\link{OMOPCDMHelper}} for the main class documentation
+\code{\link{generateTableColumns}} for column name generation details
 }

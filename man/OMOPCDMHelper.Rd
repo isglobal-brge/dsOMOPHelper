@@ -2,18 +2,66 @@
 % Please edit documentation in R/00_class.R
 \name{OMOPCDMHelper}
 \alias{OMOPCDMHelper}
-\title{OMOP CDM Helper}
+\title{OMOP CDM Helper Class}
 \description{
-This class facilitates the creation of tables from a connection to an OMOP CDM database.
+This R6 class facilitates the creation and management of tables from an OMOP Common Data Model (CDM) database
+through a DataSHIELD connection. It provides an interface to interact with OMOP CDM data in a secure and standardized way.
+}
+\details{
+The OMOPCDMHelper class is designed to:
+\itemize{
+\item Establish and maintain a connection to an OMOP CDM database
+\item Retrieve and filter person-level data
+\item Manage data symbols in the DataSHIELD environment
+\item Support distributed computing through DataSHIELD's infrastructure
+}
+
+The class automatically initializes with the person table as the base table, which can be filtered
+by specific columns or person IDs to optimize performance.
+}
+\examples{
+\dontrun{
+# Create a new helper instance
+helper <- OMOPCDMHelper$new(
+  connections = datashield.connections,
+  resource = "study_database",
+  symbol = "study_data",
+  personColumns = c("person_id", "year_of_birth", "gender_concept_id")
+)
+}
+
+Initialize a new OMOP CDM Helper instance
+
+
+## ------------------------------------------------
+## Method `OMOPCDMHelper$new`
+## ------------------------------------------------
+
+\dontrun{
+# Basic initialization
+helper <- OMOPCDMHelper$new(
+  connections = datashield.connections,
+  resource = "cdm_database",
+  symbol = "study_cohort"
+)
+
+# Initialize with specific person columns and filters
+helper <- OMOPCDMHelper$new(
+  connections = datashield.connections,
+  resource = "cdm_database",
+  symbol = "filtered_cohort",
+  personColumns = c("person_id", "gender_concept_id"),
+  personFilter = "existing_cohort"
+)
+}
+
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{OMOPCDMDatabase}}{An object representing the connection to the OMOP CDM database.}
+\item{\code{OMOPCDMDatabase}}{An object representing the active connection to the OMOP CDM database.}
 
-\item{\code{symbol}}{A symbol used to reference the retrieved data in the DataSHIELD environment.
-
-Constructor for OMOP CDM Helper}
+\item{\code{symbol}}{A character string symbol used to reference the retrieved data in the DataSHIELD environment.}
 }
 \if{html}{\out{</div>}}
 }
@@ -34,6 +82,9 @@ Constructor for OMOP CDM Helper}
 \if{html}{\out{<a id="method-OMOPCDMHelper-new"></a>}}
 \if{latex}{\out{\hypertarget{method-OMOPCDMHelper-new}{}}}
 \subsection{Method \code{new()}}{
+Creates a new instance of the OMOPCDMHelper class and establishes the initial
+connection to the OMOP CDM database. The initialization process includes setting up the
+database connection and retrieving the base person table.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OMOPCDMHelper$new(
   connections,
@@ -48,25 +99,53 @@ Constructor for OMOP CDM Helper}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{connections}}{Connection object to the DataSHIELD server.}
+\item{\code{connections}}{A DataSHIELD connection object representing the connection(s) to the DataSHIELD server(s).}
 
-\item{\code{resource}}{Either an identifier or a named list of identifiers for the specific resource(s) within the DataSHIELD server(s).
-If a named list, the name of each resource identifier should correspond to the server name in the connections.}
+\item{\code{resource}}{Either a single identifier string or a named list of identifiers for the database resource(s).
+For multiple servers, provide a named list where names match the server names in connections.}
 
-\item{\code{symbol}}{A character string representing the symbol to which the resource will be assigned.}
+\item{\code{symbol}}{A character string that will be used as the reference name for the retrieved data
+in the DataSHIELD environment.}
 
-\item{\code{personColumns}}{Optional; a vector of column names to filter from the person table.}
+\item{\code{personColumns}}{Optional character vector specifying which columns to include from the person table.
+If NULL, all columns will be retrieved.}
 
-\item{\code{personFilter}}{Optional; a character string representing another object in the DataSHIELD environment whose person IDs will be
-used to filter the processed data (this speeds up the processing of the data if not all the person IDs are needed).}
+\item{\code{personFilter}}{Optional character string referring to an existing object in the DataSHIELD
+environment containing person IDs to filter the data. This can significantly improve
+performance when working with a subset of the population.}
 
-\item{\code{...}}{Additional parameters to be passed to the underlying get method.}
+\item{\code{...}}{Additional arguments passed to the underlying ds.omop get method.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-An object of class OMOPCDMHelper.
+A new initialized instance of the OMOPCDMHelper class.
 }
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+# Basic initialization
+helper <- OMOPCDMHelper$new(
+  connections = datashield.connections,
+  resource = "cdm_database",
+  symbol = "study_cohort"
+)
+
+# Initialize with specific person columns and filters
+helper <- OMOPCDMHelper$new(
+  connections = datashield.connections,
+  resource = "cdm_database",
+  symbol = "filtered_cohort",
+  personColumns = c("person_id", "gender_concept_id"),
+  personFilter = "existing_cohort"
+)
+}
+
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OMOPCDMHelper-append"></a>}}

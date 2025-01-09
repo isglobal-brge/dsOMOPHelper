@@ -4,10 +4,44 @@
 \alias{OMOPCDMHelper-tables}
 \title{Retrieve Tables from OMOP CDM Database}
 \value{
-A list containing the names of all tables available in the OMOP CDM database.
+A named list where:
+\itemize{
+\item Names are the server identifiers
+\item Values are character vectors containing table names available on that server
+}
 }
 \description{
-This function fetches a list of all tables present in the OMOP CDM database.
-across all connected servers. It leverages the underlying OMOPCDMDatabase class
-to query the database and fetch the catalog of tables.
+Fetches a comprehensive list of all tables present in the OMOP CDM database
+across all connected DataSHIELD servers. This function provides a catalog view of the
+available data tables in the OMOP CDM schema.
+}
+\details{
+This method queries the underlying OMOPCDMDatabase object to retrieve table names
+from all connected servers. It is useful for:
+\itemize{
+\item Exploring available data tables in the OMOP CDM database
+\item Validating table existence before operations
+\item Understanding the database structure
+}
+}
+\examples{
+\dontrun{
+# Get all available tables
+tables <- helper$tables()
+
+# Print tables from first server
+print(tables[[1]])
+
+# Check if specific table exists
+if ("person" \%in\% unlist(tables)) {
+  print("Person table is available")
+}
+}
+
+}
+\seealso{
+\itemize{
+\item \link{OMOPCDMHelper-columns} for retrieving column information
+\item \link{OMOPCDMHelper-concepts} for concept dictionary access
+}
 }

@@ -2,17 +2,59 @@
 % Please edit documentation in R/02_catalog.R
 \name{OMOPCDMHelper-concepts}
 \alias{OMOPCDMHelper-concepts}
-\title{Retrieve Concepts Dictionary from OMOP CDM Database}
+\title{Retrieve Concept Dictionary from OMOP CDM Database}
 \arguments{
-\item{tables}{Optional; a vector of table names to include in the operation. If NULL, all tables are considered.}
+\item{tables}{Optional character vector of table names to query concepts from.
+If NULL (default), retrieves concepts from all available tables.}
 
-\item{max_length}{Optional; an integer specifying the maximum length of the concept names. By default, it is set to 60.}
+\item{max_length}{Optional integer specifying maximum length for concept names.
+Names longer than this will be truncated with "...". Default is 60 characters.}
 }
 \value{
-A list containing the concepts available in the specified tables of the OMOP CDM database.
+A list where:
+\itemize{
+\item Names are server identifiers
+\item Values are data frames containing concept information with columns:
+\itemize{
+\item concept_id: Unique identifier for the concept
+\item concept_name: Human-readable concept description (truncated if specified)
+}
+}
 }
 \description{
-This function fetches the dictionary of concepts from specified or all tables within the OMOP CDM database.
-across all connected servers. It leverages the underlying OMOPCDMDatabase class
-to query the database and fetch the catalog of concepts.
+Fetches and processes the concept dictionary for specified tables (or all tables
+if none specified) from the OMOP CDM database. This function provides access to standardized
+vocabulary and terminology used in the OMOP CDM.
+}
+\details{
+The function performs these operations:
+\enumerate{
+\item Validates input tables or defaults to all available tables
+\item Retrieves concepts for each table across all servers
+\item Combines concept information within each server
+\item Processes concept names to maintain readable lengths
+\item Handles missing data and errors gracefully
+}
+}
+\examples{
+\dontrun{
+# Get concepts for all tables
+all_concepts <- helper$concepts()
+
+# Get concepts for specific tables with custom name length
+selected_concepts <- helper$concepts(
+  tables = c("condition_occurrence", "drug_exposure"),
+  max_length = 40
+)
+
+# Access concepts from first server
+server1_concepts <- all_concepts[[1]]
+}
+
+}
+\seealso{
+\itemize{
+\item \link{OMOPCDMHelper-tables} for listing available tables
+\item \link{OMOPCDMHelper-columns} for column information
+}
 }

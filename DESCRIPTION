@@ -10,7 +10,7 @@ Description: This package provides a set of functions to help the user to work w
 License: MIT
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports:
     crayon,
     DSI

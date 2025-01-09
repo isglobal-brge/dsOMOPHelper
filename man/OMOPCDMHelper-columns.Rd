@@ -2,15 +2,52 @@
 % Please edit documentation in R/02_catalog.R
 \name{OMOPCDMHelper-columns}
 \alias{OMOPCDMHelper-columns}
-\title{Retrieve Columns from OMOP CDM Database}
+\title{Retrieve Column Information from OMOP CDM Database}
 \arguments{
-\item{tables}{Optional; a vector of table names to include in the operation. If NULL, all tables are considered.}
+\item{tables}{Optional character vector of table names to query. If NULL (default),
+retrieves columns for all available tables.}
 }
 \value{
-A list containing the names of all columns available in the specified tables of the OMOP CDM database.
+A nested list structure where:
+\itemize{
+\item Top level: Server identifiers
+\item Second level: Table names
+\item Values: Character vectors of column names for each table
+}
 }
 \description{
-This method fetches a comprehensive list of columns from specified or all tables within the OMOP CDM database.
-across all connected servers. It leverages the underlying OMOPCDMDatabase class
-to query the database and fetch the catalog of columns.
+Provides detailed column information for specified tables (or all tables if none specified)
+from the OMOP CDM database across all connected DataSHIELD servers. This function enables
+exploration and validation of table structures.
+}
+\details{
+The function performs the following steps:
+\enumerate{
+\item Validates input tables or defaults to all available tables
+\item Retrieves unique table names across all servers
+\item Iteratively fetches column information for each table
+\item Organizes results by server and table
+\item Handles errors gracefully for missing tables
+}
+}
+\examples{
+\dontrun{
+# Get columns for all tables
+all_columns <- helper$columns()
+
+# Get columns for specific tables
+selected_columns <- helper$columns(
+  tables = c("person", "observation")
+)
+
+# Access columns for a specific table on first server
+person_cols <- all_columns[[1]][["person"]]
+}
+
+}
+\seealso{
+\itemize{
+\item \link{OMOPCDMHelper-tables} for listing available tables
+\item \link{OMOPCDMHelper-concepts} for concept dictionary access
+}
 }
