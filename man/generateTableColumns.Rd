@@ -7,16 +7,42 @@
 generateTableColumns(tableName, columnNames)
 }
 \arguments{
-\item{tableName}{A character string specifying the name of the table.}
+\item{tableName}{A character string specifying the name of the table.
+Case-insensitive and automatically standardized.}
 
-\item{columnNames}{An optional vector of column names to include in the operation.}
+\item{columnNames}{An optional character vector of column names to process.
+If NULL, the function returns NULL without processing.}
 }
 \value{
-A vector of column names, optionally prefixed with the modified table name. If no column names are provided,
-the function returns NULL.
+A character vector containing both original and prefixed column names,
+or NULL if no column names were provided.
 }
 \description{
-This function generates a list of column names for a specified table, optionally prefixing them with the table name.
-It is designed to handle cases where no column names are provided, in which case it simply returns NULL.
-The function also removes the "_occurrence" and "_exposure" suffixes from the table name before prefixing, ensuring a cleaner column name output.
+Creates a standardized set of column names for OMOP CDM tables, optionally adding table name prefixes
+to prevent naming conflicts. The function handles special cases like exposure and occurrence tables
+by removing these suffixes before generating prefixed names.
+}
+\details{
+The function performs the following operations:
+\enumerate{
+\item Validates input column names
+\item Standardizes table names by removing specific suffixes
+\item Generates prefixed versions of column names
+\item Combines original and prefixed names
+\item Removes any duplicates from the final list
+}
+}
+\examples{
+# Basic usage
+generateTableColumns("drug_exposure", c("start_date", "end_date"))
+# Returns: c("start_date", "end_date", "drug_start_date", "drug_end_date")
+
+# Handling special table names
+generateTableColumns("condition_occurrence", c("condition_date"))
+# Returns: c("condition_date", "condition_condition_date")
+
+# NULL input handling
+generateTableColumns("drug_exposure", NULL)
+# Returns: NULL
+
 }

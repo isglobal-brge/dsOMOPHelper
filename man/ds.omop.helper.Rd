@@ -2,7 +2,7 @@
 % Please edit documentation in R/00_class.R
 \name{ds.omop.helper}
 \alias{ds.omop.helper}
-\title{Factory function for OMOP CDM Helper}
+\title{Create a new OMOP CDM Helper instance}
 \usage{
 ds.omop.helper(
   connections,
@@ -14,24 +14,53 @@ ds.omop.helper(
 )
 }
 \arguments{
-\item{connections}{Connection object to the DataSHIELD server.}
+\item{connections}{A DataSHIELD connection object representing the connection(s) to the DataSHIELD server(s).}
 
-\item{resource}{Either an identifier or a named list of identifiers for the specific resource(s) within the DataSHIELD server(s).
-If a named list, the name of each resource identifier should correspond to the server name in the connections.}
+\item{resource}{Either a single identifier string or a named list of identifiers for the database resource(s).
+For multiple servers, provide a named list where names match the server names in connections.}
 
-\item{symbol}{A character string representing the symbol to which the resource will be assigned.}
+\item{symbol}{A character string that will be used as the reference name for the retrieved data
+in the DataSHIELD environment.}
 
-\item{personColumns}{Optional; a vector of column names to filter from the person table.}
+\item{personColumns}{Optional character vector specifying which columns to include from the person table.
+If NULL, all columns will be retrieved.}
 
-\item{personFilter}{Optional; a character string representing another object in the DataSHIELD environment whose person IDs will be
-used to filter the processed data (this speeds up the processing of the data if not all the person IDs are needed).}
+\item{personFilter}{Optional character string referring to an existing object in the DataSHIELD
+environment containing person IDs to filter the data.}
 
-\item{...}{Additional parameters to be passed to the underlying get method.}
+\item{...}{Additional arguments passed to the underlying ds.omop get method.}
 }
 \value{
 A new instance of the OMOPCDMHelper class.
 }
 \description{
-This function creates a new instance of the OMOPCDMHelper class, allowing
-for interaction with an OMOP CDM database through the DataSHIELD environment.
+Factory function that creates and returns a new instance of the OMOPCDMHelper class.
+This function provides a more R-like interface for creating OMOPCDMHelper objects compared to
+using the R6 class constructor directly.
+}
+\examples{
+\dontrun{
+# Create a basic helper instance
+helper <- ds.omop.helper(
+  connections = datashield.connections,
+  resource = "cdm_database",
+  symbol = "study_data"
+)
+
+# Create helper with filtered columns
+helper <- ds.omop.helper(
+  connections = datashield.connections,
+  resource = "cdm_database",
+  symbol = "filtered_data",
+  personColumns = c("person_id", "birth_datetime", "gender_concept_id"),
+  personFilter = "existing_cohort"
+)
+}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[dsOMOPClient:ds.omop]{dsOMOPClient::ds.omop()}} for the underlying database connection
+\item \code{\link[R6:R6Class]{R6::R6Class()}} for details about the R6 class system
+}
 }

@@ -2,29 +2,86 @@
 % Please edit documentation in R/04_get.R
 \name{OMOPCDMHelper-get}
 \alias{OMOPCDMHelper-get}
-\title{Get Table from OMOP CDM Database}
+\title{Retrieve and Process Tables from OMOP CDM Database}
 \arguments{
-\item{table}{A string specifying the name of the table to be retrieved.}
+\item{table}{A string specifying the name of the table to be retrieved.
+Must be a valid table name in the OMOP CDM schema.}
 
-\item{symbol}{An optional string specifying the symbol for the table assignment in the DataSHIELD environment.}
+\item{symbol}{An optional string specifying the symbol name for table assignment
+in the DataSHIELD environment. If NULL, defaults to the table name.}
 
-\item{columnFilter}{An optional string vector specifying column names to filter (select) in the table.}
+\item{columnFilter}{An optional character vector specifying which columns to retain.
+Useful for reducing memory usage and focusing on relevant variables.}
 
-\item{conceptFilter}{An optional numeric vector specifying concept IDs to filter the table by.}
+\item{conceptFilter}{An optional numeric vector of concept IDs for filtering rows.
+Used to subset data to specific medical concepts of interest.}
 
-\item{personFilter}{An optional string specifying the symbol in the environment of a table from which to obtain person IDs.}
+\item{personFilter}{An optional string specifying a symbol name in the environment
+containing person IDs to filter by. Enables cohort-based analyses.}
 
-\item{mergeColumn}{An optional string specifying the column name for merging operations with other tables.
-Defaults to "person_id" if not specified.}
+\item{mergeColumn}{An optional string specifying the column name for merging operations.
+Defaults to "person_id" if not specified. Must exist in both tables for merging.}
 
-\item{dropNA}{An optional boolean indicating whether to drop empty columns. Defaults to FALSE.}
+\item{dropNA}{A logical indicating whether to remove columns containing only NAs.
+Default is FALSE. Set to TRUE to automatically clean empty columns.}
 
-\item{...}{Additional parameters to be passed to the underlying get method.}
+\item{...}{Additional parameters passed to the underlying database get method.
+See OMOPCDMDatabase documentation for details.}
 }
 \value{
-Assigns the specified table to the DataSHIELD environment, optionally filtered and merged.
+No direct return value. The function assigns the processed table to the
+DataSHIELD environment under the specified symbol name.
 }
 \description{
-This method retrieves a specified table by name from an OMOP CDM database and assigns it to the DataSHIELD environment.
-It allows the user to specify filters for concepts, columns, and persons, as well as options for merging and dropping empty columns.
+Retrieves and processes specified tables from an OMOP CDM database, applying
+optional filters and transformations before assigning to the DataSHIELD environment. This
+method provides flexible data access with built-in filtering capabilities for concepts,
+columns, and person-level data.
+}
+\details{
+This function performs several key operations:
+\enumerate{
+\item Validates and retrieves the requested table from the OMOP CDM database
+\item Applies specified filters (concepts, columns, persons) if provided
+\item Performs optional merging operations with other tables
+\item Handles missing data through configurable NA dropping
+\item Assigns the processed table to the DataSHIELD environment
+}
+
+The function is particularly useful for:
+\itemize{
+\item Extracting specific subsets of OMOP CDM data
+\item Filtering data based on concept vocabularies
+\item Merging related tables using common identifiers
+\item Managing memory usage through column selection
+}
+}
+\examples{
+\dontrun{
+# Basic table retrieval
+helper$get("person")
+
+# Retrieve specific columns from condition table
+helper$get("condition_occurrence",
+          symbol = "conditions",
+          columnFilter = c("condition_concept_id", "condition_start_date"))
+
+# Filter drug exposures by concept IDs
+helper$get("drug_exposure",
+          conceptFilter = c(1124300, 1124301),
+          dropNA = TRUE)
+
+# Merge with existing person cohort
+helper$get("observation",
+          personFilter = "cohort",
+          mergeColumn = "person_id")
+}
+
+}
+\seealso{
+\itemize{
+\item \link{OMOPCDMHelper-tables} for listing available tables
+\item \link{OMOPCDMHelper-concepts} for concept lookups
+\item \link{OMOPCDMHelper-columns} for exploring table structures
+}
 }
